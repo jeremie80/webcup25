@@ -156,7 +156,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT || 21 }}
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          server-dir: /public_html/
           exclude: |
             **/.git*
             **/.git*/**
