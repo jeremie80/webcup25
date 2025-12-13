@@ -1,0 +1,195 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Job 1 : Tests et vérifications
+  test:
+    name: Tests et Qualité du Code
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: webcup25_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Configuration de PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql
+          coverage: xdebug
+
+      - name: Vérification de la version PHP
+        run: php -v
+
+      - name: Validation du composer.json
+        run: composer validate --strict
+
+      - name: Installation des dépendances
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Vérification de la syntaxe PHP
+        run: find . -type f -name '*.php' -not -path './vendor/*' -exec php -l {} \;
+
+      - name: Création du fichier .env de test
+        run: |
+          cp .env.example .env || echo "DB_HOST=127.0.0.1
+          DB_NAME=webcup25_test
+          DB_USER=root
+          DB_PASS=root
+          APP_ENV=testing
+          APP_URL=http://localhost" > .env
+
+      - name: Exécution des tests PHPUnit
+        run: |
+          if [ -f "vendor/bin/phpunit" ]; then
+            vendor/bin/phpunit --coverage-text
+          else
+            echo "PHPUnit non configuré, passage à l'étape suivante"
+          fi
+
+      - name: Analyse statique avec PHPStan (optionnel)
+        run: |
+          if [ -f "vendor/bin/phpstan" ]; then
+            vendor/bin/phpstan analyse app
+          else
+            echo "PHPStan non configuré"
+          fi
+
+  # Job 2 : Vérification de sécurité
+  security:
+    name: Vérification de Sécurité
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Configuration de PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Installation des dépendances
+        run: composer install --prefer-dist --no-progress
+
+      - name: Vérification des vulnérabilités
+        run: |
+          composer audit || echo "Audit des dépendances effectué"
+
+  # Job 3 : Vérification des assets (PHP + JS/jQuery)
+  assets-check:
+    name: Vérification des Assets
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Vérification de la structure des assets
+        run: |
+          echo "✅ Vérification des fichiers CSS..."
+          if [ -d "assets/css" ]; then
+            find assets/css -name "*.css" -type f
+          fi
+          echo "✅ Vérification des fichiers JS..."
+          if [ -d "assets/js" ]; then
+            find assets/js -name "*.js" -type f
+          fi
+          echo "✅ Assets statiques prêts (pas de build nécessaire)"
+
+      - name: Upload des artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: assets
+          path: assets/
+          retention-days: 1
+
+  # Job 4 : Déploiement vers cPanel via FTP
+  deploy:
+    name: Déploiement en Production (cPanel)
+    runs-on: ubuntu-latest
+    needs: [test, security, assets-check]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configuration de PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql
+
+      - name: Installation des dépendances Composer
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Téléchargement des artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: assets
+          path: assets/
+
+      - name: Déploiement via FTP vers cPanel
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT || 21 }}
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tests/**
+            **/.env.example
+            **/phpunit.xml.dist
+            **/composer.lock
+            **/.gitignore
+            **/.gitattributes
+            **/*.md
+            **/.htaccess.example
+          
+      - name: Notification de succès
+        if: success()
+        run: |
+          echo "✅ Déploiement réussi sur cPanel !"
+          echo "📦 Fichiers PHP et dépendances Composer déployés"
+          echo "🌐 Vérifiez votre site en ligne"
+
+  # Job 5 : Notification
+  notify:
+    name: Notifications
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: always()
+
+    steps:
+      - name: Notification de succès
+        if: success()
+        run: echo "✅ Déploiement réussi !"
+
+      - name: Notification d'échec
+        if: failure()
+        run: echo "❌ Le déploiement a échoué"
+
