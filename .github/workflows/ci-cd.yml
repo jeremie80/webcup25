@@ -149,6 +149,45 @@ jobs:
           name: assets
           path: assets/
 
+      - name: Création du fichier .env pour la production
+        run: |
+          echo "🔧 Création du fichier .env depuis GitHub Secrets..."
+          cat > .env << EOF
+          # ===========================================
+          # ENVIRONNEMENT - PRODUCTION
+          # ===========================================
+          APP_ENV=production
+          
+          # ===========================================
+          # BASE DE DONNÉES - DÉVELOPPEMENT
+          # ===========================================
+          DB_DEV_HOST=localhost
+          DB_DEV_NAME=webcup25
+          DB_DEV_USER=root
+          DB_DEV_PASS=
+          
+          # ===========================================
+          # BASE DE DONNÉES - PRODUCTION
+          # ===========================================
+          DB_PROD_HOST=${{ secrets.DB_PROD_HOST }}
+          DB_PROD_NAME=${{ secrets.DB_PROD_NAME }}
+          DB_PROD_USER=${{ secrets.DB_PROD_USER }}
+          DB_PROD_PASS=${{ secrets.DB_PROD_PASS }}
+          
+          # ===========================================
+          # APPLICATION
+          # ===========================================
+          APP_URL=${{ secrets.APP_URL }}
+          
+          # ===========================================
+          # AUTRES
+          # ===========================================
+          IA_API_KEY=${{ secrets.IA_API_KEY }}
+          UPLOAD_PATH=storage/avatars/
+          EOF
+          echo "✅ Fichier .env créé avec succès"
+          echo "📋 Variables configurées depuis GitHub Secrets"
+
       - name: Déploiement via FTP vers cPanel
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
@@ -162,19 +201,22 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/tests/**
-            **/.env.example
             **/phpunit.xml.dist
             **/composer.lock
             **/.gitignore
             **/.gitattributes
             **/*.md
             **/.htaccess.example
+            **/switch-env.php
+            **/create-env.*
+            **/test-db.php
           
       - name: Notification de succès
         if: success()
         run: |
           echo "✅ Déploiement réussi sur cPanel !"
           echo "📦 Fichiers PHP et dépendances Composer déployés"
+          echo "🔐 Fichier .env créé automatiquement depuis GitHub Secrets"
           echo "🌐 Vérifiez votre site en ligne"
 
   # Job 5 : Notification

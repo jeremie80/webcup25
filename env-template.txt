@@ -1,0 +1,33 @@
+# ===========================================
+# ENVIRONNEMENT
+# ===========================================
+APP_ENV=development
+# Options: development, production
+
+# ===========================================
+# BASE DE DONNÉES - DÉVELOPPEMENT
+# ===========================================
+DB_HOST=localhost
+DB_NAME=webcup25
+DB_USER=root
+DB_PASS=
+
+# ===========================================
+# BASE DE DONNÉES - PRODUCTION (cPanel)
+# ===========================================
+# DB_HOST=localhost
+# DB_NAME=serveur1_iastromatch
+# DB_USER=serveur1_root
+# DB_PASS=kzkxfPpZYvNgVK1l
+
+# ===========================================
+# APPLICATION
+# ===========================================
+APP_URL=http://localhost:8000
+
+# ===========================================
+# AUTRES
+# ===========================================
+IA_API_KEY=
+UPLOAD_PATH=storage/avatars/
+
