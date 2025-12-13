@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout du code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configuration de PHP
         uses: shivammathur/setup-php@v2
@@ -78,7 +78,7 @@ jobs:
 
     steps:
       - name: Checkout du code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configuration de PHP
         uses: shivammathur/setup-php@v2
@@ -100,7 +100,7 @@ jobs:
 
     steps:
       - name: Checkout du code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Vérification de la structure des assets
         run: |
@@ -115,7 +115,7 @@ jobs:
           echo "✅ Assets statiques prêts (pas de build nécessaire)"
 
       - name: Upload des artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: assets
           path: assets/
@@ -130,7 +130,7 @@ jobs:
 
     steps:
       - name: Checkout du code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -144,7 +144,7 @@ jobs:
         run: composer install --no-dev --optimize-autoloader --no-interaction
 
       - name: Téléchargement des artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: assets
           path: assets/
