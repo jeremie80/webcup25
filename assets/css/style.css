@@ -1173,7 +1173,8 @@ body {
     position: absolute;
     border-radius: 50%;
     border: 2px solid var(--primary-green);
-    opacity: 0.3;
+    opacity: 0.5;
+    box-shadow: 0 0 20px rgba(95, 179, 162, 0.4);
 }
 
 .analysis-ring.ring-1 {
@@ -1186,7 +1187,7 @@ body {
     width: 80%;
     height: 80%;
     animation: rotateRing 3s linear infinite reverse;
-    border-color: var(--sky-blue);
+    border-color: var(--primary-green);
 }
 
 .analysis-ring.ring-3 {
@@ -1200,7 +1201,7 @@ body {
     width: 40%;
     height: 40%;
     animation: rotateRing 2s linear infinite reverse;
-    border-color: var(--solar-glow);
+    border-color: var(--primary-green);
 }
 
 @keyframes rotateRing {
@@ -1222,25 +1223,28 @@ body {
 .ia-orb-core-large {
     width: 120px;
     height: 120px;
-    background: radial-gradient(circle, var(--primary-green), var(--primary-soft));
+    background: radial-gradient(circle, var(--primary-green) 0%, #4CAF50 50%, var(--dark-forest) 100%);
     border-radius: 50%;
     box-shadow: 
-        0 0 30px rgba(95, 179, 162, 0.6),
-        0 0 60px rgba(95, 179, 162, 0.4),
-        inset 0 0 20px rgba(255, 255, 255, 0.3);
+        0 0 60px var(--primary-green),
+        0 0 120px rgba(95, 179, 162, 0.6),
+        0 0 180px rgba(95, 179, 162, 0.4),
+        inset 0 0 40px rgba(95, 179, 162, 0.8);
     animation: pulse 3s ease-in-out infinite;
     position: relative;
     z-index: 2;
+    filter: brightness(1.4) contrast(1.2);
 }
 
 .ia-orb-core-large .particle {
     position: absolute;
     width: 6px;
     height: 6px;
-    background: white;
+    background: var(--primary-soft);
     border-radius: 50%;
     opacity: 0.8;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px var(--primary-soft),
+                0 0 30px rgba(168, 230, 207, 0.6);
 }
 
 .ia-orb-core-large .particle-1 { top: 10%; left: 50%; animation: float 3s ease-in-out infinite; }
@@ -1265,13 +1269,16 @@ body {
     color: var(--primary-green);
     margin-bottom: var(--spacing-xs);
     letter-spacing: 0.1em;
+    text-shadow: 0 0 30px rgba(95, 179, 162, 0.6),
+                 0 0 60px rgba(95, 179, 162, 0.4);
 }
 
 .ia-name-centered p {
     font-family: var(--font-main);
     font-size: 1rem;
-    color: var(--primary-green);
-    opacity: 0.8;
+    color: var(--primary-soft);
+    opacity: 0.9;
+    text-shadow: 0 0 15px rgba(168, 230, 207, 0.4);
 }
 
 /* Messages d'analyse */
@@ -1291,19 +1298,21 @@ body {
 .analysis-text {
     font-family: var(--font-main);
     font-size: clamp(1rem, 2vw, 1.2rem);
-    color: var(--primary-green);
+    color: var(--primary-soft);
     font-weight: 500;
     line-height: 1.6;
+    text-shadow: 0 0 15px rgba(168, 230, 207, 0.3);
 }
 
 /* Message final */
 .analysis-final {
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(42, 74, 58, 0.3);
     backdrop-filter: blur(20px);
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
-    border: 2px solid rgba(95, 179, 162, 0.3);
-    box-shadow: var(--shadow-lg);
+    border: 2px solid rgba(95, 179, 162, 0.5);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(95, 179, 162, 0.2);
     margin-top: var(--spacing-xxl);
 }
 
@@ -1312,6 +1321,7 @@ body {
     color: var(--harmonious);
     margin-bottom: var(--spacing-md);
     animation: scaleIn 0.6s ease backwards;
+    text-shadow: 0 0 30px rgba(126, 237, 87, 0.6);
 }
 
 .final-title {
@@ -1320,12 +1330,14 @@ body {
     font-weight: 600;
     color: var(--primary-green);
     margin-bottom: var(--spacing-md);
+    text-shadow: 0 0 30px rgba(95, 179, 162, 0.6),
+                 0 0 60px rgba(95, 179, 162, 0.4);
 }
 
 .final-text {
     font-family: var(--font-main);
     font-size: clamp(1rem, 2vw, 1.1rem);
-    color: #2d3748;
+    color: var(--primary-soft);
     line-height: 1.8;
     margin-bottom: var(--spacing-sm);
 }
@@ -1333,6 +1345,7 @@ body {
 .final-text strong {
     color: var(--primary-green);
     font-weight: 600;
+    text-shadow: 0 0 20px rgba(95, 179, 162, 0.5);
 }
 
 .final-text em {
@@ -1343,9 +1356,10 @@ body {
 
 .final-subtitle {
     font-size: 1rem;
-    color: var(--primary-green);
-    opacity: 0.8;
+    color: var(--primary-soft);
+    opacity: 0.9;
     margin-bottom: var(--spacing-lg);
+    text-shadow: 0 0 15px rgba(168, 230, 207, 0.4);
 }
 
 .final-actions {
@@ -2651,6 +2665,10 @@ body {
     width: 100%;
 }
 
+.trust-section-sidebar .trust-gauge-bar {
+    margin: var(--spacing-md) auto;
+}
+
 .trust-section-sidebar .btn-evaluate-link {
     margin-top: var(--spacing-md);
     width: 100%;
@@ -2872,7 +2890,7 @@ body {
     font-weight: 600;
 }
 
-/* Jauge de confiance */
+/* Jauge de confiance - Liane qui grandit */
 .trust-section {
     margin: var(--spacing-md) 0;
 }
@@ -2880,11 +2898,13 @@ body {
 .trust-gauge {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    align-items: center;
+    gap: var(--spacing-sm);
     margin-top: var(--spacing-xs);
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--spacing-md);
     background: rgba(95, 179, 162, 0.05);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
+    position: relative;
 }
 
 .trust-gauge-label {
@@ -2896,39 +2916,162 @@ body {
     color: var(--primary-green);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    z-index: 2;
 }
 
 .trust-gauge-label svg {
     color: var(--primary-green);
 }
 
+/* Conteneur de la liane horizontale */
 .trust-gauge-bar {
-    height: 6px;
-    background: rgba(95, 179, 162, 0.2);
-    border-radius: var(--radius-full);
-    overflow: hidden;
+    width: 100%;
+    max-width: 300px;
+    height: 60px;
+    background: rgba(95, 179, 162, 0.1);
+    border-radius: 30px;
+    overflow: visible;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px;
 }
 
+/* Tige de la liane horizontale */
 .trust-gauge-fill {
-    height: 100%;
-    border-radius: var(--radius-full);
-    transition: width 0.8s ease;
+    height: 12px;
+    border-radius: 6px;
+    transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
-    overflow: hidden;
+    background: linear-gradient(90deg, 
+        var(--primary-soft) 0%, 
+        var(--primary-green) 50%, 
+        #4CAF50 100%);
+    box-shadow: 0 0 15px rgba(95, 179, 162, 0.4),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+    animation: vineGrow 2s ease-out;
 }
 
+/* Feuilles de la liane horizontale - Version enrichie */
+.trust-gauge-fill::before,
 .trust-gauge-fill::after {
-    content: '';
+    content: '🌿';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    animation: shimmer 2s infinite;
+    font-size: 20px;
+    animation: leafAppear 0.8s ease-out backwards;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
+/* Première feuille en haut */
+.trust-gauge-fill::before {
+    top: -22px;
+    left: 20%;
+    transform: rotate(90deg);
+    animation-delay: 0.2s;
+}
+
+/* Deuxième feuille en bas */
+.trust-gauge-fill::after {
+    bottom: -22px;
+    left: 40%;
+    transform: rotate(-90deg);
+    animation-delay: 0.4s;
+}
+
+/* Feuilles supplémentaires via box-shadow sur un pseudo-élément */
+.trust-gauge-fill {
+    overflow: visible;
+}
+
+/* Ajout de feuilles supplémentaires */
+.trust-gauge-bar::before {
+    content: '🌿';
+    position: absolute;
+    font-size: 20px;
+    top: -22px;
+    left: calc(60% * var(--progress, 0.5));
+    transform: rotate(75deg);
+    animation: leafAppear 0.8s ease-out backwards;
+    animation-delay: 0.6s;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    pointer-events: none;
+}
+
+.trust-gauge-bar::after {
+    content: '🌿';
+    position: absolute;
+    font-size: 20px;
+    bottom: -22px;
+    left: calc(80% * var(--progress, 0.5));
+    transform: rotate(-75deg) scaleX(-1);
+    animation: leafAppear 0.8s ease-out backwards;
+    animation-delay: 0.8s;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    pointer-events: none;
+}
+
+/* Feuilles centrales */
+.trust-section-sidebar .trust-gauge::before {
+    content: '🌿';
+    position: absolute;
+    font-size: 18px;
+    top: 50%;
+    left: 40%;
+    transform: translateY(-50%) rotate(45deg);
+    animation: leafAppear 0.8s ease-out backwards;
+    animation-delay: 0.5s;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.trust-section-sidebar .trust-gauge::after {
+    content: '🌿';
+    position: absolute;
+    font-size: 18px;
+    top: 50%;
+    left: 70%;
+    transform: translateY(-50%) rotate(-135deg);
+    animation: leafAppear 0.8s ease-out backwards;
+    animation-delay: 0.7s;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+/* Animation de croissance de la liane horizontale */
+@keyframes vineGrow {
+    0% {
+        width: 0;
+        transform: scaleX(0);
+        transform-origin: left;
+    }
+    60% {
+        transform: scaleX(1.05);
+    }
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+/* Animation d'apparition des feuilles */
+@keyframes leafAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Effet de shimmer sur la liane */
 @keyframes shimmer {
     0% {
         transform: translateX(-100%);
@@ -2963,10 +3106,12 @@ body {
 }
 
 .trust-gauge-status {
-    font-size: 0.7rem;
-    color: rgba(95, 179, 162, 0.7);
+    font-size: 0.75rem;
+    color: var(--primary-green);
     font-weight: 600;
     text-align: center;
+    z-index: 2;
+    position: relative;
 }
 
 /* Bouton d'évaluation du lien */
@@ -4713,6 +4858,40 @@ body {
     
     .trust-gauge {
         font-size: 0.8rem;
+    }
+    
+    .trust-gauge-bar {
+        max-width: 200px;
+        height: 50px;
+    }
+    
+    .trust-gauge-fill {
+        height: 10px;
+    }
+    
+    .trust-gauge-fill::before,
+    .trust-gauge-fill::after,
+    .trust-gauge-bar::before,
+    .trust-gauge-bar::after,
+    .trust-section-sidebar .trust-gauge::before,
+    .trust-section-sidebar .trust-gauge::after {
+        font-size: 14px;
+    }
+    
+    .trust-gauge-fill::before {
+        top: -18px;
+    }
+    
+    .trust-gauge-fill::after {
+        bottom: -18px;
+    }
+    
+    .trust-gauge-bar::before {
+        top: -18px;
+    }
+    
+    .trust-gauge-bar::after {
+        bottom: -18px;
     }
     
     .conversation-user-info {

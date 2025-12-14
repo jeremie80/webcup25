@@ -28,7 +28,13 @@
     ?>
     
     <main class="container">
-        <?= $content ?>
+        <?php 
+        if (isset($content)) {
+            echo $content;
+        } elseif (isset($viewPath) && file_exists($viewPath)) {
+            include $viewPath;
+        }
+        ?>
     </main>
     
     <!-- JavaScript -->

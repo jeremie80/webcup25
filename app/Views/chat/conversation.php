@@ -379,7 +379,7 @@ function updateTrustLevel(messageCount) {
         stage = 'complete';
     }
     
-    // Mettre à jour l'affichage
+    // Mettre à jour l'affichage (liane qui grandit horizontalement)
     trustGaugeFill.style.width = percentage + '%';
     trustGaugeFill.className = `trust-gauge-fill trust-stage-${stage}`;
     trustGaugeStatus.textContent = `${label} — ${percentage}%`;

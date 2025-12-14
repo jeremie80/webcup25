@@ -63,46 +63,18 @@ class Router
     private function notFound()
     {
         http_response_code(404);
-        echo "<!DOCTYPE html>
-<html lang='fr'>
-<head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>404 - Page Non Trouvée</title>
-    <link rel='stylesheet' href='/assets/css/style.css'>
-    <style>
-        .error-404 {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            color: white;
+        
+        // Préparer les données pour la vue
+        $title = '404 — Route Inconnue — IAstroMatch';
+        $hideHeader = true;
+        $viewPath = __DIR__ . '/../Views/error/404.php';
+        
+        // Vérifier si les fichiers existent
+        if (file_exists($viewPath) && file_exists(__DIR__ . '/../Views/layout.php')) {
+            include __DIR__ . '/../Views/layout.php';
+        } else {
+            echo "<!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'><title>404</title></head><body><h1>404 - Page non trouvée</h1><p><a href='/'>Retour à l'accueil</a></p></body></html>";
         }
-        .error-404 h1 {
-            font-size: 6rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, #e74c3c, #ff6b6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .error-404 p {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            color: #ccc;
-        }
-    </style>
-</head>
-<body>
-    <div class='error-404'>
-        <h1>404</h1>
-        <p>Page non trouvée</p>
-        <a href='/' class='btn btn-primary'>Retour à l'accueil</a>
-    </div>
-</body>
-</html>";
     }
 }
 

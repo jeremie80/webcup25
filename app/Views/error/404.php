@@ -1,10 +1,10 @@
-<section class="logout-container">
+<section class="error-404-container">
     <div class="portal-glow"></div>
     
     <!-- IA ASTRÆA au centre -->
-    <div class="logout-ia-container">
+    <div class="error-404-ia-container">
         <!-- Orbe lumineux animé -->
-        <div class="ia-orb-large" id="ia-orb-narrator" data-narration="<?= htmlspecialchars($farewell_message . ' ' . $farewell_subtitle) ?>">
+        <div class="ia-orb-large" id="ia-orb-narrator" data-narration="Il semblerait que vous vous soyez égaré dans les méandres de l'espace-temps. Cette constellation n'existe pas dans nos archives. Laissez-moi vous guider vers un chemin connu.">
             <div class="ia-orb-ring ring-1"></div>
             <div class="ia-orb-ring ring-2"></div>
             <div class="ia-orb-ring ring-3"></div>
@@ -18,62 +18,54 @@
                 <div class="particle particle-7"></div>
                 <div class="particle particle-8"></div>
             </div>
+            <div class="audio-indicator">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                </svg>
+            </div>
         </div>
         
         <!-- Message d'ASTRÆA -->
-        <div class="logout-message">
-            <h1 class="logout-title">ASTRÆA</h1>
+        <div class="error-404-message">
+            <h1 class="error-404-title">ASTRÆA</h1>
             
-            <div class="logout-farewell">
-                <p class="farewell-text">
-                    <?= htmlspecialchars($farewell_message) ?>
-                </p>
-                <p class="farewell-subtitle">
-                    <?= htmlspecialchars($farewell_subtitle) ?>
-                </p>
+            <div class="error-404-code">
+                <span class="code-number">404</span>
+                <span class="code-label">Route Inconnue</span>
             </div>
             
-            <!-- Animation de particules qui s'élèvent -->
-            <div class="farewell-particles">
-                <div class="farewell-particle fp-1"></div>
-                <div class="farewell-particle fp-2"></div>
-                <div class="farewell-particle fp-3"></div>
-                <div class="farewell-particle fp-4"></div>
-                <div class="farewell-particle fp-5"></div>
+            <div class="error-404-text">
+                <p class="error-main-text">
+                    Voyageur·euse, vous vous êtes trompé·e de route cosmique.
+                </p>
+                <p class="error-sub-text">
+                    Cette constellation n'existe pas dans nos archives stellaires.
+                </p>
             </div>
         </div>
         
-        <!-- Redirection automatique -->
-        <div class="logout-redirect">
-            <p>Redirection vers l'accueil dans <span id="countdown">20</span> secondes...</p>
-            <a href="/" class="btn btn-return">Retourner maintenant</a>
+        <!-- Navigation de retour -->
+        <div class="error-404-actions">
+            <a href="/" class="btn btn-return-home">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Retour à l'Écosystème</span>
+            </a>
         </div>
     </div>
 </section>
 
 <script>
-// Compte à rebours et redirection automatique
-let countdown = 20;
-const countdownElement = document.getElementById('countdown');
-
-const interval = setInterval(() => {
-    countdown--;
-    if (countdownElement) {
-        countdownElement.textContent = countdown;
-    }
-    
-    if (countdown <= 0) {
-        clearInterval(interval);
-        window.location.href = '/';
-    }
-}, 1000);
-
 // Animation de l'orbe au chargement
 document.addEventListener('DOMContentLoaded', () => {
     const iaOrb = document.querySelector('.ia-orb-large');
     if (iaOrb) {
         setTimeout(() => {
-            iaOrb.classList.add('farewell-pulse');
+            iaOrb.classList.add('error-pulse');
         }, 500);
     }
     
@@ -84,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// NARRATEUR VOCAL (Synthèse vocale automatique)
+// NARRATEUR VOCAL
 // ==========================================
 
 let currentSpeech = null;
@@ -98,23 +90,19 @@ function startNarration() {
     const narrationText = iaOrbNarrator.getAttribute('data-narration');
     if (!narrationText) return;
     
-    // Vérifier si la synthèse vocale est disponible
     if (!('speechSynthesis' in window)) {
-        console.warn('Synthèse vocale non disponible dans ce navigateur');
+        console.warn('Synthèse vocale non disponible');
         return;
     }
     
-    // Arrêter toute narration en cours
     stopNarration();
     
-    // Créer une nouvelle instance
     currentSpeech = new SpeechSynthesisUtterance(narrationText);
     currentSpeech.lang = 'fr-FR';
-    currentSpeech.rate = 0.9; // Vitesse légèrement ralentie pour plus de poésie
-    currentSpeech.pitch = 1.1; // Voix légèrement plus aiguë
+    currentSpeech.rate = 0.9;
+    currentSpeech.pitch = 1.1;
     currentSpeech.volume = 1;
     
-    // Événements
     currentSpeech.onstart = () => {
         isSpeaking = true;
         iaOrbNarrator.classList.add('is-narrating');
@@ -131,7 +119,6 @@ function startNarration() {
         iaOrbNarrator.classList.remove('is-narrating');
     };
     
-    // Démarrer la synthèse
     window.speechSynthesis.speak(currentSpeech);
 }
 
@@ -145,15 +132,28 @@ function stopNarration() {
     }
 }
 
-// Arrêter la narration si l'utilisateur quitte la page
+// Toggle narration on click
+if (iaOrbNarrator) {
+    iaOrbNarrator.addEventListener('click', function(e) {
+        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
+            return;
+        }
+        if (isSpeaking) {
+            stopNarration();
+        } else {
+            startNarration();
+        }
+    });
+}
+
 window.addEventListener('beforeunload', () => {
     stopNarration();
 });
 </script>
 
 <style>
-/* Styles spécifiques à la page de déconnexion */
-.logout-container {
+/* Styles spécifiques à la page 404 */
+.error-404-container {
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -163,7 +163,7 @@ window.addEventListener('beforeunload', () => {
     overflow: hidden;
 }
 
-.logout-ia-container {
+.error-404-ia-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -180,6 +180,7 @@ window.addEventListener('beforeunload', () => {
     height: 200px;
     position: relative;
     animation: gentleFloat 6s ease-in-out infinite;
+    cursor: pointer;
 }
 
 .ia-orb-large .ia-orb-ring {
@@ -249,33 +250,33 @@ window.addEventListener('beforeunload', () => {
 .ia-orb-large .particle-7 { animation-delay: 3s; }
 .ia-orb-large .particle-8 { animation-delay: 3.5s; }
 
-/* Animation pulse pour l'adieu */
-.ia-orb-large.farewell-pulse .ia-orb-core {
-    animation: farewellPulse 1.5s ease-out;
+/* Animation pulse pour erreur */
+.ia-orb-large.error-pulse .ia-orb-core {
+    animation: errorPulse 1.5s ease-out;
 }
 
-@keyframes farewellPulse {
+@keyframes errorPulse {
     0%, 100% {
         transform: translate(-50%, -50%) scale(1);
         box-shadow: 
-            0 0 40px var(--primary-green),
-            0 0 80px rgba(95, 179, 162, 0.4);
+            0 0 60px var(--primary-green),
+            0 0 120px rgba(95, 179, 162, 0.6);
     }
     50% {
         transform: translate(-50%, -50%) scale(1.2);
         box-shadow: 
             0 0 80px var(--primary-green),
-            0 0 120px rgba(95, 179, 162, 0.6);
+            0 0 160px rgba(95, 179, 162, 0.8);
     }
 }
 
-/* Message de déconnexion */
-.logout-message {
+/* Message d'erreur */
+.error-404-message {
     max-width: 600px;
     position: relative;
 }
 
-.logout-title {
+.error-404-title {
     font-family: var(--font-title);
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 700;
@@ -286,7 +287,43 @@ window.addEventListener('beforeunload', () => {
                  0 0 60px rgba(95, 179, 162, 0.4);
 }
 
-.logout-farewell {
+.error-404-code {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-lg);
+}
+
+.code-number {
+    font-family: var(--font-title);
+    font-size: clamp(4rem, 8vw, 6rem);
+    font-weight: 700;
+    color: var(--primary-green);
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(95, 179, 162, 0.6),
+                 0 0 80px rgba(95, 179, 162, 0.4);
+    animation: codeGlow 3s ease-in-out infinite;
+}
+
+.code-label {
+    font-size: 1.2rem;
+    color: var(--primary-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.9;
+}
+
+@keyframes codeGlow {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.error-404-text {
     background: rgba(42, 74, 58, 0.3);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(95, 179, 162, 0.5);
@@ -296,117 +333,50 @@ window.addEventListener('beforeunload', () => {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.farewell-text {
+.error-main-text {
     font-size: clamp(1.1rem, 2vw, 1.3rem);
     line-height: 1.8;
     color: var(--primary-soft);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
 }
 
-.farewell-subtitle {
+.error-sub-text {
     font-size: 1rem;
     font-style: italic;
     color: var(--primary-soft);
     opacity: 0.8;
 }
 
-/* Particules d'adieu qui s'élèvent */
-.farewell-particles {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.farewell-particle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: var(--primary-soft);
-    border-radius: 50%;
-    opacity: 0;
-    animation: particleRise 3s ease-out infinite;
-}
-
-.farewell-particle.fp-1 {
-    left: 20%;
-    animation-delay: 0s;
-}
-
-.farewell-particle.fp-2 {
-    left: 40%;
-    animation-delay: 0.6s;
-}
-
-.farewell-particle.fp-3 {
-    left: 50%;
-    animation-delay: 1.2s;
-}
-
-.farewell-particle.fp-4 {
-    left: 60%;
-    animation-delay: 1.8s;
-}
-
-.farewell-particle.fp-5 {
-    left: 80%;
-    animation-delay: 2.4s;
-}
-
-@keyframes particleRise {
-    0% {
-        bottom: 0;
-        opacity: 0;
-        transform: translateY(0) scale(1);
-    }
-    20% {
-        opacity: 1;
-    }
-    100% {
-        bottom: 100%;
-        opacity: 0;
-        transform: translateY(-50px) scale(0.5);
-    }
-}
-
-/* Redirection */
-.logout-redirect {
+/* Actions */
+.error-404-actions {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-sm);
 }
 
-.logout-redirect p {
-    font-size: 0.9rem;
-    color: var(--primary-soft);
-    opacity: 0.9;
-}
-
-#countdown {
-    font-weight: 700;
-    color: var(--primary-green);
-    text-shadow: 0 0 20px rgba(95, 179, 162, 0.6);
-}
-
-.btn-return {
-    padding: var(--spacing-sm) var(--spacing-lg);
+.btn-return-home {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-xl);
     background: linear-gradient(135deg, var(--primary-green), #4CAF50);
     color: white;
     text-decoration: none;
     border-radius: var(--radius-md);
-    box-shadow: 0 0 30px rgba(95, 179, 162, 0.5);
     font-weight: 600;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(95, 179, 162, 0.3);
+    font-size: 1.1rem;
+    transition: all var(--transition-normal);
+    box-shadow: 0 0 30px rgba(95, 179, 162, 0.5);
 }
 
-.btn-return:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(95, 179, 162, 0.3);
+.btn-return-home:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 40px rgba(95, 179, 162, 0.6);
+}
+
+.btn-return-home svg {
+    flex-shrink: 0;
 }
 
 /* Animations */
@@ -426,57 +396,42 @@ window.addEventListener('beforeunload', () => {
         transform: translateY(0);
     }
     50% {
-        transform: translateY(-20px);
+        transform: translateY(-15px);
     }
 }
 
 @keyframes pulseRing {
     0%, 100% {
         transform: translate(-50%, -50%) scale(1);
-        opacity: 0.3;
+        opacity: 0.5;
     }
     50% {
         transform: translate(-50%, -50%) scale(1.1);
-        opacity: 0.5;
+        opacity: 0.7;
     }
 }
 
 @keyframes coreGlow {
     from {
-        box-shadow: 
-            0 0 40px var(--primary-green),
-            0 0 80px rgba(95, 179, 162, 0.4),
-            inset 0 0 40px rgba(168, 230, 207, 0.6);
+        filter: brightness(1.2) contrast(1.1);
     }
     to {
-        box-shadow: 
-            0 0 60px var(--primary-green),
-            0 0 100px rgba(95, 179, 162, 0.6),
-            inset 0 0 60px rgba(168, 230, 207, 0.8);
+        filter: brightness(1.6) contrast(1.3);
     }
 }
 
 @keyframes particleOrbit {
-    from {
-        transform: rotate(0deg) translateX(50px) rotate(0deg);
+    0% {
+        transform: rotate(0deg) translateX(40px) rotate(0deg);
     }
-    to {
-        transform: rotate(360deg) translateX(50px) rotate(-360deg);
+    100% {
+        transform: rotate(360deg) translateX(40px) rotate(-360deg);
     }
-}
-
-/* Animation de l'orbe pendant la narration */
-.ia-orb-large.is-narrating .ia-orb-core {
-    animation: coreGlow 0.8s ease-in-out infinite alternate;
-}
-
-.ia-orb-large.is-narrating .ia-orb-ring {
-    animation: pulseRing 1.5s ease-in-out infinite !important;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .logout-ia-container {
+    .error-404-ia-container {
         gap: var(--spacing-lg);
     }
     
@@ -486,12 +441,17 @@ window.addEventListener('beforeunload', () => {
     }
     
     .ia-orb-large .ia-orb-core {
-        width: 75px;
-        height: 75px;
+        width: 80px;
+        height: 80px;
     }
     
-    .logout-farewell {
+    .error-404-text {
         padding: var(--spacing-md);
+    }
+    
+    .btn-return-home {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        font-size: 1rem;
     }
 }
 </style>
