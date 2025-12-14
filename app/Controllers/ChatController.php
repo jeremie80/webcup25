@@ -88,6 +88,19 @@ class ChatController extends Controller
         $userModel = new \App\Models\User();
         $otherUser = $userModel->findById($otherProfile['user_id']);
         
+        // Calculer le niveau de confiance interespèce (basé sur le nombre de messages)
+        $messageCount = count($messages);
+        $trustLevel = $this->calculateTrustLevel($messageCount);
+        
+        // Vérifier si la révélation doit être déclenchée
+        $revelationTriggered = false;
+        if ($messageCount >= 10 && $match['status'] !== 'revealed') {
+            // Déclencher la révélation automatiquement
+            $matchModel->updateStatus($matchId, 'revealed');
+            $match['status'] = 'revealed';
+            $revelationTriggered = true;
+        }
+        
         $data = [
             'title' => 'Conversation — IAstroMatch',
             'galactic_name' => $_SESSION['galactic_name'] ?? 'Voyageur',
@@ -96,7 +109,11 @@ class ChatController extends Controller
             'messages' => $messages,
             'other_user' => $otherUser,
             'other_profile' => $otherProfile,
-            'current_profile_id' => $_SESSION['profile_id']
+            'current_profile_id' => $_SESSION['profile_id'],
+            'trust_level' => $trustLevel,
+            'message_count' => $messageCount,
+            'revelation_triggered' => $revelationTriggered,
+            'is_revealed' => ($match['status'] === 'revealed')
         ];
         
         $this->view('chat/conversation', $data);
@@ -199,6 +216,13 @@ class ChatController extends Controller
         $messageModel = new Message();
         $messages = $messageModel->findByMatchId($matchId);
         
+        // Vérifier si la révélation doit être déclenchée
+        $messageCount = count($messages);
+        if ($messageCount >= 10 && $match['status'] !== 'revealed') {
+            $matchModel->updateStatus($matchId, 'revealed');
+            $match['status'] = 'revealed';
+        }
+        
         // Formater les messages pour JSON
         $formattedMessages = [];
         foreach ($messages as $msg) {
@@ -216,9 +240,57 @@ class ChatController extends Controller
         echo json_encode([
             'success' => true,
             'messages' => $formattedMessages,
-            'current_profile_id' => $_SESSION['profile_id']
+            'current_profile_id' => $_SESSION['profile_id'],
+            'is_revealed' => ($match['status'] === 'revealed'),
+            'message_count' => $messageCount
         ]);
         exit();
+    }
+    
+    /**
+     * Calculer le niveau de confiance interespèce basé sur les interactions
+     * @param int $messageCount Nombre de messages échangés
+     * @return array ['percentage' => int, 'label' => string, 'stage' => string]
+     */
+    private function calculateTrustLevel($messageCount)
+    {
+        if ($messageCount === 0) {
+            return [
+                'percentage' => 5,
+                'label' => 'Contact Initial',
+                'stage' => 'initial'
+            ];
+        } elseif ($messageCount <= 2) {
+            return [
+                'percentage' => 30,
+                'label' => 'Découverte Prudente',
+                'stage' => 'discovery'
+            ];
+        } elseif ($messageCount <= 5) {
+            return [
+                'percentage' => 55,
+                'label' => 'Familiarisation',
+                'stage' => 'familiarity'
+            ];
+        } elseif ($messageCount <= 8) {
+            return [
+                'percentage' => 75,
+                'label' => 'Confiance Émergente',
+                'stage' => 'emerging'
+            ];
+        } elseif ($messageCount <= 9) {
+            return [
+                'percentage' => 90,
+                'label' => 'Lien Établi',
+                'stage' => 'established'
+            ];
+        } else {
+            return [
+                'percentage' => 100,
+                'label' => 'Harmonie Profonde',
+                'stage' => 'deep'
+            ];
+        }
     }
 }
 

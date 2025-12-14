@@ -253,15 +253,12 @@
         <!-- CTA -->
         <footer class="match-detail-actions pre-encounter-actions">
             <?php if ($match['status'] === 'suggested'): ?>
-                <form action="/match/accept" method="POST" class="cta-form">
-                    <input type="hidden" name="match_id" value="<?= $match['id'] ?>">
-                    <button type="submit" class="btn btn-initiate-contact">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                        <span>Initier un premier contact</span>
-                    </button>
-                </form>
+                <a href="/match/contact-mode?match_id=<?= $match['id'] ?>" class="btn btn-initiate-contact">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Initier un premier contact</span>
+                </a>
                 
                 <form action="/match/reject" method="POST" class="cta-form">
                     <input type="hidden" name="match_id" value="<?= $match['id'] ?>">

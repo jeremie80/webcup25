@@ -21,21 +21,48 @@
         </a>
         
         <div class="conversation-user-info">
-            <div class="user-avatar-small">
-                <?php if (!empty($other_profile['avatar_path']) && file_exists(__DIR__ . '/../../../' . $other_profile['avatar_path'])): ?>
-                    <img src="/<?= htmlspecialchars($other_profile['avatar_path']) ?>" alt="Avatar">
+            <!-- Forme abstraite ou avatar selon révélation -->
+            <div class="entity-visual-container" id="entity-visual-container" data-revealed="<?= $is_revealed ? 'true' : 'false' ?>">
+                <?php if ($is_revealed): ?>
+                    <!-- Avatar révélé avec animation -->
+                    <div class="revealed-avatar">
+                        <?php if (!empty($other_profile['avatar_path']) && file_exists(__DIR__ . '/../../../' . $other_profile['avatar_path'])): ?>
+                            <img src="/<?= htmlspecialchars($other_profile['avatar_path']) ?>" alt="Avatar révélé" class="avatar-image-revealed">
+                        <?php else: ?>
+                            <div class="avatar-placeholder-revealed">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 <?php else: ?>
-                    <div class="avatar-placeholder-small">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
+                    <!-- Forme abstraite (pré-révélation) -->
+                    <div class="entity-abstract-icon">
+                        <div class="abstract-entity-shape shape-1"></div>
+                        <div class="abstract-entity-shape shape-2"></div>
+                        <div class="abstract-entity-shape shape-3"></div>
                     </div>
                 <?php endif; ?>
             </div>
             <div>
                 <h2 class="conversation-user-name"><?= htmlspecialchars($other_user['galactic_name']) ?></h2>
                 <p class="conversation-user-origin"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $other_user['origin_type']))) ?></p>
+                
+                <!-- Jauge de confiance interespèce -->
+                <div class="trust-gauge">
+                    <div class="trust-gauge-label">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        <span>Niveau de confiance interespèce</span>
+                    </div>
+                    <div class="trust-gauge-bar">
+                        <div class="trust-gauge-fill trust-stage-<?= $trust_level['stage'] ?>" style="width: <?= $trust_level['percentage'] ?>%;"></div>
+                    </div>
+                    <span class="trust-gauge-status"><?= htmlspecialchars($trust_level['label']) ?> — <?= $trust_level['percentage'] ?>%</span>
+                </div>
             </div>
         </div>
         
@@ -56,11 +83,35 @@
                 <p>Aucun message pour le moment. Commencez la conversation !</p>
             </div>
         <?php else: ?>
-            <?php foreach ($messages as $msg): ?>
-                <?php 
-                    $isSender = ($msg['sender_profile_id'] == $current_profile_id);
-                    $messageClass = $isSender ? 'message-sent' : 'message-received';
-                ?>
+            <!-- Message de révélation (si déclenchée) -->
+            <?php if ($revelation_triggered): ?>
+                <div class="revelation-message" id="revelation-message">
+                    <div class="revelation-glow"></div>
+                    <div class="revelation-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4"></path>
+                            <path d="M12 8h.01"></path>
+                        </svg>
+                    </div>
+                    <div class="revelation-content">
+                        <h3 class="revelation-title">✨ Révélation Cosmique ✨</h3>
+                        <p class="revelation-text">
+                            <strong>ASTRÆA :</strong> La compréhension mutuelle atteint un seuil suffisant. Révélation autorisée.
+                        </p>
+                        <p class="revelation-subtext">
+                            La forme véritable de <?= htmlspecialchars($other_user['galactic_name']) ?> vous est maintenant accessible.
+                        </p>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <?php 
+            $messageIndex = 0;
+            foreach ($messages as $msg): 
+                $messageIndex++;
+                $isSender = ($msg['sender_profile_id'] == $current_profile_id);
+                $messageClass = $isSender ? 'message-sent' : 'message-received';
+            ?>
                 <div class="message <?= $messageClass ?>">
                     <div class="message-header">
                         <span class="message-author"><?= htmlspecialchars($msg['galactic_name']) ?></span>
@@ -70,7 +121,50 @@
                         <?= nl2br(htmlspecialchars($msg['content'])) ?>
                     </div>
                 </div>
-            <?php endforeach; ?>
+                
+                <?php 
+                // Interventions IA contextuelles à des moments clés
+                $iaInterventions = [];
+                
+                if ($messageIndex === 1) {
+                    $iaInterventions[] = "Bienvenue dans cet espace d'échange. Prenez le temps de vous découvrir mutuellement.";
+                } elseif ($messageIndex === 3) {
+                    $iaInterventions[] = "Les premiers échanges sont prometteurs. Continuez à cultiver cette connexion avec authenticité.";
+                } elseif ($messageIndex === 6) {
+                    $iaInterventions[] = "Votre dialogue s'approfondit. La confiance se construit progressivement.";
+                } elseif ($messageIndex === 10) {
+                    $iaInterventions[] = "Vous avez établi un lien significatif. L'harmonie entre vous atteint son apogée.";
+                }
+                
+                // Détection de mots potentiellement problématiques (simulation)
+                $content = strtolower($msg['content']);
+                $warningWords = ['guerre', 'conflit', 'détruire', 'haïr', 'attaquer', 'ennemi'];
+                foreach ($warningWords as $word) {
+                    if (strpos($content, $word) !== false) {
+                        $iaInterventions[] = "⚠️ Attention : certaines expressions peuvent être perçues comme hostiles. Privilégiez un langage constructif.";
+                        break;
+                    }
+                }
+                
+                // Afficher les interventions IA
+                foreach ($iaInterventions as $intervention):
+                ?>
+                    <div class="ia-intervention">
+                        <div class="ia-intervention-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                            </svg>
+                        </div>
+                        <div class="ia-intervention-content">
+                            <strong>ASTRÆA :</strong> <?= htmlspecialchars($intervention) ?>
+                        </div>
+                    </div>
+                <?php 
+                endforeach;
+            endforeach; ?>
         <?php endif; ?>
     </article>
     
@@ -154,7 +248,7 @@ function checkIfScrolledToBottom() {
 }
 
 // Créer un élément message
-function createMessageElement(msg) {
+function createMessageElement(msg, messageIndex) {
     const messageClass = msg.is_current_user ? 'message-sent' : 'message-received';
     
     const messageDiv = document.createElement('div');
@@ -172,6 +266,143 @@ function createMessageElement(msg) {
     `;
     
     return messageDiv;
+}
+
+// Créer une intervention IA
+function createIAIntervention(text) {
+    const interventionDiv = document.createElement('div');
+    interventionDiv.className = 'ia-intervention';
+    
+    interventionDiv.innerHTML = `
+        <div class="ia-intervention-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+            </svg>
+        </div>
+        <div class="ia-intervention-content">
+            <strong>ASTRÆA :</strong> ${escapeHtml(text)}
+        </div>
+    `;
+    
+    return interventionDiv;
+}
+
+// Générer les interventions IA contextuelles
+function generateIAInterventions(msg, messageIndex) {
+    const interventions = [];
+    
+    // Interventions basées sur le nombre de messages
+    if (messageIndex === 1) {
+        interventions.push("Bienvenue dans cet espace d'échange. Prenez le temps de vous découvrir mutuellement.");
+    } else if (messageIndex === 3) {
+        interventions.push("Les premiers échanges sont prometteurs. Continuez à cultiver cette connexion avec authenticité.");
+    } else if (messageIndex === 6) {
+        interventions.push("Votre dialogue s'approfondit. La confiance se construit progressivement.");
+    } else if (messageIndex === 10) {
+        interventions.push("Vous avez établi un lien significatif. L'harmonie entre vous atteint son apogée.");
+    }
+    
+    // Détection de mots potentiellement problématiques
+    const content = msg.content.toLowerCase();
+    const warningWords = ['guerre', 'conflit', 'détruire', 'haïr', 'attaquer', 'ennemi', 'violent', 'hostile'];
+    
+    for (const word of warningWords) {
+        if (content.includes(word)) {
+            interventions.push("⚠️ Attention : certaines expressions peuvent être perçues comme hostiles. Privilégiez un langage constructif.");
+            break;
+        }
+    }
+    
+    return interventions;
+}
+
+// Créer le message de révélation
+function createRevelationMessage(otherUserName) {
+    const revelationDiv = document.createElement('div');
+    revelationDiv.className = 'revelation-message';
+    revelationDiv.id = 'revelation-message';
+    
+    revelationDiv.innerHTML = `
+        <div class="revelation-glow"></div>
+        <div class="revelation-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+            </svg>
+        </div>
+        <div class="revelation-content">
+            <h3 class="revelation-title">✨ Révélation Cosmique ✨</h3>
+            <p class="revelation-text">
+                <strong>ASTRÆA :</strong> La compréhension mutuelle atteint un seuil suffisant. Révélation autorisée.
+            </p>
+            <p class="revelation-subtext">
+                La forme véritable de ${escapeHtml(otherUserName)} vous est maintenant accessible.
+            </p>
+        </div>
+    `;
+    
+    return revelationDiv;
+}
+
+// Déclencher la révélation (animation)
+function triggerRevelation(otherUserName, avatarPath) {
+    const entityVisualContainer = document.getElementById('entity-visual-container');
+    if (!entityVisualContainer) return;
+    
+    // Marquer comme révélé
+    entityVisualContainer.setAttribute('data-revealed', 'true');
+    
+    // Remplacer la forme abstraite par l'avatar
+    const abstractIcon = entityVisualContainer.querySelector('.entity-abstract-icon');
+    if (abstractIcon) {
+        // Créer le nouvel avatar
+        const revealedAvatar = document.createElement('div');
+        revealedAvatar.className = 'revealed-avatar';
+        
+        if (avatarPath) {
+            revealedAvatar.innerHTML = `<img src="${avatarPath}" alt="Avatar révélé" class="avatar-image-revealed">`;
+        } else {
+            revealedAvatar.innerHTML = `
+                <div class="avatar-placeholder-revealed">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+            `;
+        }
+        
+        // Transition douce
+        abstractIcon.style.opacity = '0';
+        abstractIcon.style.transform = 'scale(0.5)';
+        
+        setTimeout(() => {
+            entityVisualContainer.innerHTML = '';
+            entityVisualContainer.appendChild(revealedAvatar);
+        }, 500);
+    }
+    
+    // Ajouter le message de révélation dans le chat
+    const messagesContainer = document.getElementById('messages-container');
+    if (messagesContainer && !document.getElementById('revelation-message')) {
+        const revelationMsg = createRevelationMessage(otherUserName);
+        // Insérer au début des messages (après le premier message si il y en a)
+        const firstMessage = messagesContainer.querySelector('.message');
+        if (firstMessage) {
+            firstMessage.insertAdjacentElement('afterend', revelationMsg);
+        } else {
+            messagesContainer.insertBefore(revelationMsg, messagesContainer.firstChild);
+        }
+        
+        // Scroll pour montrer le message
+        setTimeout(() => {
+            revelationMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
 }
 
 // Rafraîchir les messages via AJAX
@@ -200,12 +431,34 @@ function refreshMessages() {
                     const existingIds = Array.from(currentMessages).map(el => parseInt(el.dataset.messageId));
                     
                     // Ajouter les nouveaux messages
-                    data.messages.forEach(msg => {
+                    data.messages.forEach((msg, index) => {
                         if (!existingIds.includes(msg.id)) {
-                            const messageElement = createMessageElement(msg);
+                            const messageIndex = index + 1;
+                            const messageElement = createMessageElement(msg, messageIndex);
                             messagesContainer.appendChild(messageElement);
+                            
+                            // Générer et ajouter les interventions IA
+                            const interventions = generateIAInterventions(msg, messageIndex);
+                            interventions.forEach(text => {
+                                const interventionElement = createIAIntervention(text);
+                                messagesContainer.appendChild(interventionElement);
+                            });
                         }
                     });
+                    
+                    // Vérifier si la révélation doit être déclenchée
+                    const entityVisualContainer = document.getElementById('entity-visual-container');
+                    const isRevealed = entityVisualContainer && entityVisualContainer.getAttribute('data-revealed') === 'true';
+                    
+                    if (data.messages.length >= 10 && !isRevealed && !document.getElementById('revelation-message')) {
+                        // Déclencher la révélation
+                        const otherUserName = '<?= htmlspecialchars($other_user['galactic_name']) ?>';
+                        const avatarPath = '<?= !empty($other_profile['avatar_path']) ? '/' . htmlspecialchars($other_profile['avatar_path']) : '' ?>';
+                        
+                        setTimeout(() => {
+                            triggerRevelation(otherUserName, avatarPath);
+                        }, 1000);
+                    }
                     
                     // Scroll automatique si l'utilisateur était en bas
                     if (isScrolledToBottom) {

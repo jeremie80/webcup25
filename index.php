@@ -32,6 +32,7 @@ $router->get('/profile/analysis', 'ProfileController@analysis');
 $router->get('/profile/validate', 'ProfileController@validate');
 $router->get('/match', 'MatchController@index');
 $router->get('/match/detail', 'MatchController@detail');
+$router->get('/match/contact-mode', 'MatchController@contactMode');
 $router->get('/match/revealed', 'MatchController@revealed');
 $router->post('/match/accept', 'MatchController@accept');
 $router->post('/match/reject', 'MatchController@reject');

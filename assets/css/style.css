@@ -2645,6 +2645,400 @@ body {
     height: 32px;
 }
 
+/* ============================================
+   ÉCRAN 7 - Espace d'échange (Pré-révélation)
+   ============================================ */
+
+/* Forme abstraite au lieu d'avatar */
+.entity-abstract-icon {
+    width: 64px;
+    height: 64px;
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.abstract-entity-shape {
+    position: absolute;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    background: linear-gradient(135deg, var(--primary-soft) 0%, var(--primary-green) 100%);
+    animation: morphEntityShape 6s ease-in-out infinite;
+}
+
+.abstract-entity-shape.shape-1 {
+    width: 64px;
+    height: 64px;
+    opacity: 0.8;
+    animation-delay: 0s;
+}
+
+.abstract-entity-shape.shape-2 {
+    width: 48px;
+    height: 48px;
+    opacity: 0.6;
+    animation-delay: 2s;
+}
+
+.abstract-entity-shape.shape-3 {
+    width: 32px;
+    height: 32px;
+    opacity: 0.4;
+    animation-delay: 4s;
+}
+
+@keyframes morphEntityShape {
+    0%, 100% {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        transform: rotate(0deg);
+    }
+    25% {
+        border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
+        transform: rotate(90deg);
+    }
+    50% {
+        border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+        transform: rotate(180deg);
+    }
+    75% {
+        border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+        transform: rotate(270deg);
+    }
+}
+
+/* Jauge de confiance interespèce */
+.trust-gauge {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: rgba(95, 179, 162, 0.05);
+    border-radius: var(--radius-sm);
+}
+
+.trust-gauge-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary-green);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.trust-gauge-label svg {
+    color: var(--primary-green);
+}
+
+.trust-gauge-bar {
+    height: 6px;
+    background: rgba(95, 179, 162, 0.2);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    position: relative;
+}
+
+.trust-gauge-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 0.8s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.trust-gauge-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.trust-stage-initial {
+    background: linear-gradient(90deg, #E0E0E0, #BDBDBD);
+}
+
+.trust-stage-discovery {
+    background: linear-gradient(90deg, #FFE082, #FFD54F);
+}
+
+.trust-stage-familiarity {
+    background: linear-gradient(90deg, #FFD166, #FFA726);
+}
+
+.trust-stage-emerging {
+    background: linear-gradient(90deg, #A8E6CF, #81C784);
+}
+
+.trust-stage-established {
+    background: linear-gradient(90deg, #66BB6A, #4CAF50);
+}
+
+.trust-stage-deep {
+    background: linear-gradient(90deg, #5FB3A2, var(--primary-green));
+}
+
+.trust-gauge-status {
+    font-size: 0.7rem;
+    color: rgba(95, 179, 162, 0.7);
+    font-weight: 600;
+    text-align: center;
+}
+
+/* ============================================
+   Révélation (Moment WOW)
+   ============================================ */
+
+.entity-visual-container {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+}
+
+.revealed-avatar {
+    width: 64px;
+    height: 64px;
+    position: relative;
+    animation: revelationAppear 2s ease-in-out;
+}
+
+@keyframes revelationAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-180deg);
+        filter: blur(20px);
+    }
+    50% {
+        filter: blur(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        filter: blur(0);
+    }
+}
+
+.avatar-image-revealed {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    border: 3px solid var(--primary-green);
+    box-shadow: 0 0 20px rgba(95, 179, 162, 0.5),
+                0 0 40px rgba(95, 179, 162, 0.3),
+                0 0 60px rgba(95, 179, 162, 0.1);
+    animation: revelationPulse 3s ease-in-out infinite;
+}
+
+@keyframes revelationPulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(95, 179, 162, 0.5),
+                    0 0 40px rgba(95, 179, 162, 0.3),
+                    0 0 60px rgba(95, 179, 162, 0.1);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(95, 179, 162, 0.7),
+                    0 0 60px rgba(95, 179, 162, 0.5),
+                    0 0 90px rgba(95, 179, 162, 0.3);
+    }
+}
+
+.avatar-placeholder-revealed {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--primary-soft), var(--primary-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border: 3px solid var(--primary-green);
+    box-shadow: 0 0 20px rgba(95, 179, 162, 0.5);
+}
+
+/* Message de révélation */
+.revelation-message {
+    position: relative;
+    background: linear-gradient(135deg, rgba(168, 230, 207, 0.3), rgba(95, 179, 162, 0.2));
+    border: 2px solid var(--primary-green);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin: var(--spacing-lg) 0;
+    text-align: center;
+    overflow: hidden;
+    animation: revelationMessageAppear 1.5s ease-in-out;
+}
+
+@keyframes revelationMessageAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-20px);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.revelation-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(95, 179, 162, 0.3) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    animation: revelationGlowPulse 2s ease-in-out infinite;
+}
+
+@keyframes revelationGlowPulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.8;
+    }
+}
+
+.revelation-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--primary-soft), var(--primary-green));
+    color: white;
+    margin: 0 auto var(--spacing-md);
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 8px 30px rgba(95, 179, 162, 0.4);
+    animation: revelationIconSpin 3s ease-in-out infinite;
+}
+
+@keyframes revelationIconSpin {
+    0%, 100% {
+        transform: rotate(0deg) scale(1);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.1);
+    }
+}
+
+.revelation-content {
+    position: relative;
+    z-index: 1;
+}
+
+.revelation-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-green);
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    animation: revelationTitleShine 2s ease-in-out infinite;
+}
+
+@keyframes revelationTitleShine {
+    0%, 100% {
+        text-shadow: 0 0 10px rgba(95, 179, 162, 0.5);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(95, 179, 162, 0.8),
+                     0 0 30px rgba(95, 179, 162, 0.5);
+    }
+}
+
+.revelation-text {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: rgba(95, 179, 162, 0.9);
+    margin-bottom: var(--spacing-sm);
+}
+
+.revelation-text strong {
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+.revelation-subtext {
+    font-size: 0.95rem;
+    color: rgba(95, 179, 162, 0.7);
+    font-style: italic;
+}
+
+/* Interventions IA dans la conversation */
+.ia-intervention {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background: rgba(168, 230, 207, 0.2);
+    border: 1px solid rgba(95, 179, 162, 0.3);
+    border-left: 4px solid var(--primary-green);
+    border-radius: var(--radius-md);
+    margin: var(--spacing-sm) 0;
+    align-self: center;
+    max-width: 85%;
+    animation: iaInterventionSlide 0.5s ease;
+}
+
+@keyframes iaInterventionSlide {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.ia-intervention-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: rgba(95, 179, 162, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-green);
+    flex-shrink: 0;
+}
+
+.ia-intervention-content {
+    flex: 1;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(95, 179, 162, 0.9);
+}
+
+.ia-intervention-content strong {
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
 /* Messages Container */
 .messages-container {
     flex: 1;
@@ -3574,6 +3968,387 @@ body {
     box-shadow: var(--shadow-lg);
 }
 
+/* ============================================
+   Choix du Mode de Contact (ÉCRAN 6)
+   ============================================ */
+
+.contact-mode-container {
+    min-height: 100vh;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+.contact-mode-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    position: relative;
+}
+
+.contact-mode-header .back-button {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background: rgba(95, 179, 162, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-green);
+    transition: all var(--transition-normal);
+    text-decoration: none;
+}
+
+.contact-mode-header .back-button:hover {
+    background: var(--primary-green);
+    color: white;
+    transform: translateX(-3px);
+}
+
+.contact-mode-title {
+    font-family: var(--font-title);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 600;
+    color: var(--primary-green);
+    margin: 0;
+}
+
+.contact-mode-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: rgba(95, 179, 162, 0.7);
+    margin: 0;
+}
+
+.contact-mode-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+/* Introduction */
+.contact-mode-intro {
+    text-align: center;
+    padding: var(--spacing-lg);
+    background: rgba(246, 247, 235, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(95, 179, 162, 0.2);
+}
+
+.intro-text {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: rgba(95, 179, 162, 0.9);
+    margin: 0;
+}
+
+.intro-text strong {
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+/* Grille des modes */
+.contact-modes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--spacing-xl);
+    margin: var(--spacing-xl) 0;
+}
+
+/* Carte de mode */
+.mode-card {
+    background: rgba(246, 247, 235, 0.6);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(95, 179, 162, 0.2);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.mode-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-soft), var(--primary-green));
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.mode-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-green);
+}
+
+.mode-card:hover::before {
+    opacity: 1;
+}
+
+/* Styles spécifiques par mode */
+.mode-emotional {
+    border-left: 4px solid #E57373;
+}
+
+.mode-diplomatic {
+    border-left: 4px solid #81C784;
+}
+
+.mode-guided {
+    border-left: 4px solid #64B5F6;
+}
+
+.mode-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-full);
+    background: rgba(95, 179, 162, 0.1);
+    margin: 0 auto var(--spacing-sm);
+}
+
+.mode-emoji {
+    font-size: 2.5rem;
+}
+
+.mode-title {
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-green);
+    margin: 0;
+    text-align: center;
+}
+
+.mode-description {
+    flex: 1;
+}
+
+.mode-description p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(95, 179, 162, 0.85);
+    margin: 0;
+    text-align: center;
+}
+
+/* Caractéristiques (engagement/risque) */
+.mode-characteristics {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(95, 179, 162, 0.05);
+    border-radius: var(--radius-sm);
+}
+
+.characteristic {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.characteristic strong {
+    font-size: 0.875rem;
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+.engagement-bar,
+.risk-bar {
+    height: 8px;
+    background: rgba(95, 179, 162, 0.2);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    position: relative;
+}
+
+.engagement-fill,
+.risk-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 0.5s ease;
+}
+
+.engagement-fill.high {
+    width: 85%;
+    background: linear-gradient(90deg, #E57373, #EF5350);
+}
+
+.engagement-fill.medium {
+    width: 60%;
+    background: linear-gradient(90deg, #FFB74D, #FFA726);
+}
+
+.engagement-fill.low {
+    width: 35%;
+    background: linear-gradient(90deg, #81C784, #66BB6A);
+}
+
+.risk-fill.medium {
+    width: 60%;
+    background: linear-gradient(90deg, #FFB74D, #FFA726);
+}
+
+.risk-fill.low {
+    width: 35%;
+    background: linear-gradient(90deg, #81C784, #66BB6A);
+}
+
+.risk-fill.minimal {
+    width: 20%;
+    background: linear-gradient(90deg, #64B5F6, #42A5F5);
+}
+
+.engagement-label,
+.risk-label {
+    font-size: 0.8rem;
+    color: rgba(95, 179, 162, 0.7);
+    font-style: italic;
+}
+
+/* Note du mode */
+.mode-note {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+    background: rgba(168, 230, 207, 0.2);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--primary-green);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: rgba(95, 179, 162, 0.8);
+}
+
+.mode-note svg {
+    flex-shrink: 0;
+    color: var(--primary-green);
+    margin-top: 2px;
+}
+
+/* Formulaire de sélection */
+.mode-select-form {
+    margin-top: auto;
+}
+
+.btn-select-mode {
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--primary-green);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-main);
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.btn-select-mode:hover {
+    background: #4FA091;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Carte de conseil ASTRÆA */
+.contact-mode-footer {
+    margin-top: var(--spacing-xl);
+}
+
+.ia-advice-card {
+    background: rgba(168, 230, 207, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(95, 179, 162, 0.3);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xl);
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: flex-start;
+    box-shadow: var(--shadow-sm);
+}
+
+.ia-advice-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background: rgba(95, 179, 162, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-green);
+    flex-shrink: 0;
+}
+
+.ia-advice-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.ia-advice-content strong {
+    font-family: var(--font-title);
+    font-size: 1.125rem;
+    color: var(--primary-green);
+}
+
+.ia-advice-content p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(95, 179, 162, 0.9);
+    margin: 0;
+}
+
+/* Responsive Mode de Contact */
+@media (max-width: 768px) {
+    .contact-mode-container {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+    
+    .contact-mode-header .back-button {
+        position: relative;
+        left: auto;
+        top: auto;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .contact-modes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .ia-advice-card {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+}
+
 /* Responsive Pré-rencontre */
 @media (max-width: 768px) {
     .narrative-card {
@@ -3720,6 +4495,86 @@ body {
     .btn-send {
         width: 100%;
         justify-content: center;
+    }
+    
+    /* ÉCRAN 7 - Responsive */
+    .ia-intervention {
+        max-width: 95%;
+        padding: var(--spacing-sm);
+    }
+    
+    .trust-gauge {
+        font-size: 0.8rem;
+    }
+    
+    .conversation-user-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+    
+    .entity-abstract-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .abstract-entity-shape.shape-1 {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .abstract-entity-shape.shape-2 {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .abstract-entity-shape.shape-3 {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Révélation - Responsive */
+    .entity-visual-container {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .revealed-avatar {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .avatar-image-revealed,
+    .avatar-placeholder-revealed {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .revelation-message {
+        padding: var(--spacing-md);
+        margin: var(--spacing-md) 0;
+    }
+    
+    .revelation-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .revelation-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .revelation-title {
+        font-size: 1.2rem;
+    }
+    
+    .revelation-text {
+        font-size: 0.95rem;
+    }
+    
+    .revelation-subtext {
+        font-size: 0.85rem;
     }
 }
 

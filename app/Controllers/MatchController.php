@@ -344,6 +344,92 @@ class MatchController extends Controller
         $this->view('match/detail', $data);
     }
     
+    public function contactMode()
+    {
+        // Vérifier que l'utilisateur est connecté
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /auth/start');
+            exit();
+        }
+        
+        // Vérifier que l'utilisateur a un profil et le stocker en session si nécessaire
+        if (!isset($_SESSION['profile_id'])) {
+            $profileModel = new Profile();
+            $userProfile = $profileModel->findByUserId($_SESSION['user_id']);
+            
+            if (!$userProfile) {
+                header('Location: /profile/create');
+                exit();
+            }
+            
+            $_SESSION['profile_id'] = $userProfile['id'];
+        }
+        
+        // Récupérer l'ID du match
+        $matchId = (int)($_GET['match_id'] ?? 0);
+        
+        if (empty($matchId)) {
+            $_SESSION['error'] = 'Match introuvable.';
+            header('Location: /match');
+            exit();
+        }
+        
+        // Récupérer le match
+        $matchModel = new MatchModel();
+        $match = $matchModel->findById($matchId);
+        
+        if (!$match) {
+            $_SESSION['error'] = 'Match introuvable.';
+            header('Location: /match');
+            exit();
+        }
+        
+        // Vérifier que l'utilisateur fait partie de ce match
+        if ($match['profile_a_id'] != $_SESSION['profile_id'] && $match['profile_b_id'] != $_SESSION['profile_id']) {
+            $_SESSION['error'] = 'Vous n\'avez pas accès à ce match.';
+            header('Location: /match');
+            exit();
+        }
+        
+        // Vérifier que le match est au statut "suggested"
+        if ($match['status'] !== 'suggested') {
+            $_SESSION['info'] = 'Ce match a déjà été accepté.';
+            header('Location: /match/detail?id=' . $matchId);
+            exit();
+        }
+        
+        // Récupérer l'autre profil
+        $otherProfileId = ($match['profile_a_id'] == $_SESSION['profile_id']) ? $match['profile_b_id'] : $match['profile_a_id'];
+        $profileModel = new Profile();
+        $otherProfile = $profileModel->findById($otherProfileId);
+        
+        if (!$otherProfile) {
+            $_SESSION['error'] = 'Profil introuvable.';
+            header('Location: /match');
+            exit();
+        }
+        
+        // Récupérer l'utilisateur de l'autre profil
+        $userModel = new User();
+        $otherUser = $userModel->findById($otherProfile['user_id']);
+        
+        if (!$otherUser) {
+            $_SESSION['error'] = 'Utilisateur introuvable.';
+            header('Location: /match');
+            exit();
+        }
+        
+        $data = [
+            'title' => 'Choix du Mode de Contact — IAstroMatch',
+            'galactic_name' => $_SESSION['galactic_name'] ?? 'Voyageur',
+            'match' => $match,
+            'other_user' => $otherUser,
+            'other_profile' => $otherProfile
+        ];
+        
+        $this->view('match/contact-mode', $data);
+    }
+    
     public function accept()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -377,10 +463,26 @@ class MatchController extends Controller
         
         $matchModel = new MatchModel();
         $matchId = (int)$_POST['match_id'];
+        $contactMode = $_POST['contact_mode'] ?? 'emotional'; // Par défaut : émotionnel
+        
+        // Valider le mode de contact
+        $validModes = ['emotional', 'diplomatic', 'guided'];
+        if (!in_array($contactMode, $validModes)) {
+            $contactMode = 'emotional';
+        }
         
         // Accepter le match
         if ($matchModel->accept($matchId, $_SESSION['profile_id'])) {
-            $_SESSION['success'] = 'Harmonie acceptée ! Si l\'autre voyageur accepte aussi, vous serez révélés mutuellement.';
+            // Stocker le mode de contact choisi en session (pourra être utilisé plus tard dans le chat)
+            $_SESSION['contact_mode_' . $matchId] = $contactMode;
+            
+            $modeLabels = [
+                'emotional' => 'Message Émotionnel',
+                'diplomatic' => 'Protocole Diplomatique',
+                'guided' => 'Dialogue Guidé par l\'IA'
+            ];
+            
+            $_SESSION['success'] = 'Connexion initiée avec le mode "' . $modeLabels[$contactMode] . '". Si l\'autre voyageur accepte aussi, vous pourrez échanger.';
         } else {
             $_SESSION['error'] = 'Erreur lors de l\'acceptation de l\'harmonie.';
         }
