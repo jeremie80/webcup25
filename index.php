@@ -34,11 +34,15 @@ $router->get('/match', 'MatchController@index');
 $router->get('/match/detail', 'MatchController@detail');
 $router->get('/match/contact-mode', 'MatchController@contactMode');
 $router->get('/match/revealed', 'MatchController@revealed');
+$router->get('/match/result', 'MatchController@result');
 $router->post('/match/accept', 'MatchController@accept');
 $router->post('/match/reject', 'MatchController@reject');
+$router->post('/match/request-mediation', 'MatchController@requestMediation');
+$router->post('/match/end-peacefully', 'MatchController@endPeacefully');
 $router->get('/chat', 'ChatController@index');
 $router->get('/chat/messages', 'ChatController@getMessages');
 $router->post('/chat/send', 'ChatController@send');
+$router->get('/dashboard', 'DashboardController@index');
 
 // Dispatcher la requête
 $router->dispatch();

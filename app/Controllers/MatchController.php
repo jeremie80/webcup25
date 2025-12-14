@@ -604,4 +604,233 @@ class MatchController extends Controller
         
         $this->view('match/revealed', $data);
     }
+    
+    /**
+     * Afficher le résultat du lien (conclusion)
+     */
+    public function result()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /auth/start');
+            exit();
+        }
+
+        if (!isset($_SESSION['profile_id'])) {
+            $profileModel = new Profile();
+            $userProfile = $profileModel->findByUserId($_SESSION['user_id']);
+            if (!$userProfile) {
+                header('Location: /profile/create');
+                exit();
+            }
+            $_SESSION['profile_id'] = $userProfile['id'];
+        }
+
+        $matchId = (int)($_GET['match_id'] ?? 0);
+        if (empty($matchId)) {
+            $_SESSION['error'] = 'Match introuvable.';
+            header('Location: /match');
+            exit();
+        }
+
+        $matchModel = new MatchModel();
+        $match = $matchModel->findById($matchId);
+
+        if (!$match) {
+            $_SESSION['error'] = 'Match introuvable.';
+            header('Location: /match');
+            exit();
+        }
+
+        if ($match['profile_a_id'] != $_SESSION['profile_id'] && $match['profile_b_id'] != $_SESSION['profile_id']) {
+            $_SESSION['error'] = 'Vous n\'avez pas accès à ce match.';
+            header('Location: /match');
+            exit();
+        }
+
+        // Vérifier que le match est révélé
+        if ($match['status'] !== 'revealed') {
+            $_SESSION['error'] = 'Ce match n\'est pas encore révélé.';
+            header('Location: /match/detail?id=' . $matchId);
+            exit();
+        }
+
+        $otherProfileId = ($match['profile_a_id'] == $_SESSION['profile_id']) ? $match['profile_b_id'] : $match['profile_a_id'];
+        $profileModel = new Profile();
+        $otherProfile = $profileModel->findById($otherProfileId);
+        $userModel = new User();
+        $otherUser = $userModel->findById($otherProfile['user_id']);
+
+        // Calculer le nombre de messages échangés
+        $messageModel = new \App\Models\Message();
+        $messages = $messageModel->findByMatchId($matchId);
+        $messageCount = count($messages);
+
+        // Évaluer le résultat du lien
+        $linkResult = $this->evaluateLinkResult($match, $messageCount);
+
+        $data = [
+            'title' => 'Résultat du Lien — IAstroMatch',
+            'galactic_name' => $_SESSION['galactic_name'] ?? 'Voyageur',
+            'match' => $match,
+            'match_id' => $matchId,
+            'other_user' => $otherUser,
+            'other_profile' => $otherProfile,
+            'message_count' => $messageCount,
+            'link_result' => $linkResult,
+            'flash_success' => $_SESSION['success'] ?? null,
+            'flash_error' => $_SESSION['error'] ?? null,
+        ];
+        unset($_SESSION['success']);
+        unset($_SESSION['error']);
+
+        $this->view('match/result', $data);
+    }
+
+    /**
+     * Évaluer le résultat du lien
+     */
+    private function evaluateLinkResult($match, $messageCount)
+    {
+        $compatibilityType = $match['compatibility_type'];
+        $compatibilityScore = $match['compatibility_score'];
+
+        // Logique d'évaluation
+        if ($compatibilityType === 'harmonious' && $messageCount >= 10) {
+            return [
+                'type' => 'harmonious',
+                'emoji' => '🌿',
+                'title' => 'Lien Harmonieux Établi',
+                'description' => 'Votre connexion transcende les différences. Les échanges sont fluides, la compréhension mutuelle est profonde. Cette alliance s\'inscrit dans la durée.',
+                'ia_message' => 'ASTRÆA observe une convergence exceptionnelle. Les énergies se complètent naturellement. Cette harmonie est rare et précieuse.',
+                'cta_primary' => 'Poursuivre la relation',
+                'cta_secondary' => null,
+                'cta_tertiary' => 'Archiver temporairement',
+                'color' => 'harmonious'
+            ];
+        } elseif (($compatibilityType === 'unstable' || $compatibilityType === 'improbable') && $messageCount >= 10) {
+            return [
+                'type' => 'complex',
+                'emoji' => '⚠️',
+                'title' => 'Relation Complexe mais Viable',
+                'description' => 'Des tensions existent, mais le dialogue les apaise. Votre relation nécessite de l\'attention et de la communication continue. Les différences peuvent devenir des forces.',
+                'ia_message' => 'ASTRÆA détecte des frictions créatives. Cette relation demande un engagement conscient, mais peut mener à une croissance mutuelle significative.',
+                'cta_primary' => 'Continuer avec vigilance',
+                'cta_secondary' => 'Demander médiation IA',
+                'cta_tertiary' => 'Mettre en pause',
+                'color' => 'unstable'
+            ];
+        } elseif ($compatibilityType === 'dangerous' && $messageCount >= 10) {
+            return [
+                'type' => 'risky',
+                'emoji' => '☢️',
+                'title' => 'Risque Élevé — Médiation Recommandée',
+                'description' => 'Des incompatibilités fondamentales persistent. Sans intervention, cette relation pourrait générer des tensions importantes. Une médiation par ASTRÆA est vivement conseillée.',
+                'ia_message' => 'ASTRÆA recommande une approche prudente. Les divergences sont profondes. Un accompagnement spécialisé est nécessaire pour éviter les conflits.',
+                'cta_primary' => 'Demander médiation IA',
+                'cta_secondary' => 'Poursuivre en autonomie',
+                'cta_tertiary' => 'Mettre fin pacifiquement',
+                'color' => 'dangerous'
+            ];
+        } elseif ($messageCount >= 20) {
+            return [
+                'type' => 'historic',
+                'emoji' => '🌌',
+                'title' => 'Alliance Historique Détectée',
+                'description' => 'Votre relation a franchi un cap significatif. Au-delà de la compatibilité initiale, vous avez co-construit une connexion unique et profonde. Cette alliance marque l\'histoire de l\'écosystème.',
+                'ia_message' => 'ASTRÆA enregistre cette union dans les archives cosmiques. Vous êtes devenus un modèle d\'harmonie interespèce. Votre lien inspire d\'autres voyageurs.',
+                'cta_primary' => 'Célébrer l\'alliance',
+                'cta_secondary' => 'Devenir mentors',
+                'cta_tertiary' => 'Archives privées',
+                'color' => 'harmonious-gold'
+            ];
+        } else {
+            // Par défaut (peu de messages)
+            return [
+                'type' => 'emerging',
+                'emoji' => '🌱',
+                'title' => 'Lien en Construction',
+                'description' => 'Votre relation est encore jeune. Continuez les échanges pour permettre à ASTRÆA d\'évaluer la profondeur de votre connexion.',
+                'ia_message' => 'ASTRÆA collecte encore des données. Poursuivez vos interactions pour une évaluation complète.',
+                'cta_primary' => 'Continuer les échanges',
+                'cta_secondary' => null,
+                'cta_tertiary' => 'Reporter l\'évaluation',
+                'color' => 'emerging'
+            ];
+        }
+    }
+
+    /**
+     * Demander une médiation IA
+     */
+    public function requestMediation()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /match');
+            exit();
+        }
+
+        if (!isset($_SESSION['user_id']) || !isset($_SESSION['profile_id'])) {
+            header('Location: /auth/start');
+            exit();
+        }
+
+        $matchId = (int)($_POST['match_id'] ?? 0);
+        if (empty($matchId)) {
+            $_SESSION['error'] = 'Match introuvable.';
+            header('Location: /match');
+            exit();
+        }
+
+        // TODO: Implémenter la logique de médiation IA
+        // Pour l'instant, on redirige avec un message de succès
+
+        $_SESSION['success'] = 'Demande de médiation IA enregistrée. ASTRÆA vous contactera prochainement.';
+        header('Location: /match/result?match_id=' . $matchId);
+        exit();
+    }
+
+    /**
+     * Mettre fin pacifiquement à la relation
+     */
+    public function endPeacefully()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /match');
+            exit();
+        }
+
+        if (!isset($_SESSION['user_id']) || !isset($_SESSION['profile_id'])) {
+            header('Location: /auth/start');
+            exit();
+        }
+
+        $matchId = (int)($_POST['match_id'] ?? 0);
+        if (empty($matchId)) {
+            $_SESSION['error'] = 'Match introuvable.';
+            header('Location: /match');
+            exit();
+        }
+
+        $matchModel = new MatchModel();
+        $match = $matchModel->findById($matchId);
+
+        if (!$match) {
+            $_SESSION['error'] = 'Match introuvable.';
+            header('Location: /match');
+            exit();
+        }
+
+        if ($match['profile_a_id'] != $_SESSION['profile_id'] && $match['profile_b_id'] != $_SESSION['profile_id']) {
+            $_SESSION['error'] = 'Vous n\'avez pas accès à ce match.';
+            header('Location: /match');
+            exit();
+        }
+
+        // Mettre à jour le statut à 'rejected'
+        $matchModel->updateStatus($matchId, 'rejected');
+
+        $_SESSION['success'] = 'La relation a été close pacifiquement. ASTRÆA honore votre décision consciente.';
+        header('Location: /match');
+        exit();
+    }
 }

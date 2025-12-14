@@ -63,6 +63,17 @@
                     </div>
                     <span class="trust-gauge-status"><?= htmlspecialchars($trust_level['label']) ?> — <?= $trust_level['percentage'] ?>%</span>
                 </div>
+                
+                <?php if ($is_revealed && $message_count >= 10): ?>
+                    <!-- Bouton d'évaluation du lien (après révélation) -->
+                    <a href="/match/result?match_id=<?= $match_id ?>" class="btn-evaluate-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                        </svg>
+                        <span>Évaluer ce lien</span>
+                    </a>
+                <?php endif; ?>
             </div>
         </div>
         

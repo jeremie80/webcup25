@@ -7,6 +7,7 @@
         <ul class="nav-menu" role="list">
             <li><a href="/">Accueil</a></li>
             <?php if(isset($_SESSION['user_id'])): ?>
+                <li><a href="/dashboard">Tableau de bord</a></li>
                 <li><a href="/match">Suggestions</a></li>
                 <li><a href="/match/revealed">Révélations</a></li>
                 <li><a href="/chat">Échanges</a></li>
