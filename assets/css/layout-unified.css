@@ -15,6 +15,12 @@
         position: relative;
     }
     
+    /* Spécifique à la page de conversation */
+    .conversation-container.portal-entrance-split {
+        display: flex;
+        flex-direction: row-reverse;
+    }
+    
     /* IA fixe à droite avec marges */
     .portal-ia-side {
         position: fixed;
@@ -53,6 +59,19 @@
         min-height: 100vh;
         padding: var(--spacing-xl);
         overflow-y: auto;
+    }
+    
+    /* Spécifique à la conversation - messages scrollables */
+    .conversation-container .portal-content-side {
+        display: flex;
+        flex-direction: column;
+        padding: var(--spacing-lg);
+    }
+    
+    .conversation-container .messages-container {
+        flex: 1;
+        overflow-y: auto;
+        max-height: calc(100vh - 300px);
     }
     
     /* Pour les pages avec header visible */

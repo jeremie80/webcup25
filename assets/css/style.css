@@ -2650,11 +2650,22 @@ body {
     position: relative;
 }
 
+.conversation-container .portal-ia-side {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.conversation-container .ia-orb-container {
+    display: flex !important;
+    visibility: visible !important;
+}
+
 /* Trust section dans la sidebar IA */
 .trust-section-sidebar {
     width: 100%;
-    margin-top: var(--spacing-xl);
-    padding: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-sm);
     background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(10px);
     border-radius: var(--radius-md);
@@ -2666,7 +2677,8 @@ body {
 }
 
 .trust-section-sidebar .trust-gauge-bar {
-    margin: var(--spacing-md) auto;
+    margin: var(--spacing-sm) auto;
+    max-width: 100%;
 }
 
 .trust-section-sidebar .btn-evaluate-link {
@@ -2911,7 +2923,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--primary-green);
     text-transform: uppercase;
@@ -2926,22 +2938,21 @@ body {
 /* Conteneur de la liane horizontale */
 .trust-gauge-bar {
     width: 100%;
-    max-width: 300px;
-    height: 60px;
+    height: 50px;
     background: rgba(95, 179, 162, 0.1);
-    border-radius: 30px;
+    border-radius: 25px;
     overflow: visible;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 8px;
+    padding: 6px;
 }
 
 /* Tige de la liane horizontale */
 .trust-gauge-fill {
-    height: 12px;
-    border-radius: 6px;
+    height: 10px;
+    border-radius: 5px;
     transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
     background: linear-gradient(90deg, 
@@ -2959,14 +2970,14 @@ body {
 .trust-gauge-fill::after {
     content: '🌿';
     position: absolute;
-    font-size: 20px;
+    font-size: 16px;
     animation: leafAppear 0.8s ease-out backwards;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 /* Première feuille en haut */
 .trust-gauge-fill::before {
-    top: -22px;
+    top: -18px;
     left: 20%;
     transform: rotate(90deg);
     animation-delay: 0.2s;
@@ -2974,7 +2985,7 @@ body {
 
 /* Deuxième feuille en bas */
 .trust-gauge-fill::after {
-    bottom: -22px;
+    bottom: -18px;
     left: 40%;
     transform: rotate(-90deg);
     animation-delay: 0.4s;
@@ -2989,8 +3000,8 @@ body {
 .trust-gauge-bar::before {
     content: '🌿';
     position: absolute;
-    font-size: 20px;
-    top: -22px;
+    font-size: 16px;
+    top: -18px;
     left: calc(60% * var(--progress, 0.5));
     transform: rotate(75deg);
     animation: leafAppear 0.8s ease-out backwards;
@@ -3002,8 +3013,8 @@ body {
 .trust-gauge-bar::after {
     content: '🌿';
     position: absolute;
-    font-size: 20px;
-    bottom: -22px;
+    font-size: 16px;
+    bottom: -18px;
     left: calc(80% * var(--progress, 0.5));
     transform: rotate(-75deg) scaleX(-1);
     animation: leafAppear 0.8s ease-out backwards;
@@ -3016,7 +3027,7 @@ body {
 .trust-section-sidebar .trust-gauge::before {
     content: '🌿';
     position: absolute;
-    font-size: 18px;
+    font-size: 14px;
     top: 50%;
     left: 40%;
     transform: translateY(-50%) rotate(45deg);
@@ -3030,7 +3041,7 @@ body {
 .trust-section-sidebar .trust-gauge::after {
     content: '🌿';
     position: absolute;
-    font-size: 18px;
+    font-size: 14px;
     top: 50%;
     left: 70%;
     transform: translateY(-50%) rotate(-135deg);
@@ -3106,7 +3117,7 @@ body {
 }
 
 .trust-gauge-status {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--primary-green);
     font-weight: 600;
     text-align: center;
