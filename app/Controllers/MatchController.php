@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\IALanguage;
 use App\Models\Profile;
 use App\Models\User;
 use App\Models\MatchModel;
@@ -72,11 +73,19 @@ class MatchController extends Controller
             ];
         }
         
+        // Obtenir un message de narration aléatoire
+        $narrationMessage = IALanguage::getMatchNarration();
+        
+        // Obtenir un message "aucun match" aléatoire
+        $noMatchMessage = IALanguage::getNoMatchMessage();
+
         $data = [
             'title' => 'Harmonies Cosmiques — IAstroMatch',
             'galactic_name' => $_SESSION['galactic_name'] ?? 'Voyageur',
             'matches' => $matches,
-            'userProfile' => $userProfile
+            'userProfile' => $userProfile,
+            'narration_message' => $narrationMessage,
+            'no_match_message' => $noMatchMessage
         ];
         
         $this->view('match/index', $data);
@@ -218,22 +227,22 @@ class MatchController extends Controller
             $type = 'harmonious';
             $emoji = '🌱';
             $label = 'Compatible harmonieux';
-            $description = 'Cette rencontre offre une compatibilité naturelle. Vos environnements et valeurs s\'alignent pour créer une synergie positive.';
+            $description = IALanguage::getCompatibilityDescription('harmonious');
         } elseif ($score >= 30) {
             $type = 'unstable';
             $emoji = '⚠️';
             $label = 'Instable mais enrichissant';
-            $description = 'Cette connexion présente des défis, mais peut apporter une croissance mutuelle significative. L\'adaptation sera nécessaire.';
+            $description = IALanguage::getCompatibilityDescription('unstable');
         } elseif ($score >= 0) {
             $type = 'improbable';
             $emoji = '🌌';
             $label = 'Alliance improbable';
-            $description = 'Une rencontre peu conventionnelle qui pourrait mener à des découvertes inattendues. L\'issue reste incertaine.';
+            $description = IALanguage::getCompatibilityDescription('improbable');
         } else {
             $type = 'dangerous';
             $emoji = '☢️';
             $label = 'Risque diplomatique';
-            $description = 'Cette interaction comporte des risques significatifs. Les différences fondamentales peuvent créer des tensions importantes.';
+            $description = IALanguage::getCompatibilityDescription('dangerous');
         }
         
         return [
@@ -332,13 +341,17 @@ class MatchController extends Controller
             'label' => $this->getCompatibilityLabel($match['compatibility_type'])
         ];
         
+        // Obtenir un message de narration aléatoire
+        $narrationMessage = IALanguage::getMatchDetailNarration($otherUser['galactic_name']);
+        
         $data = [
             'title' => 'Détails du Match — IAstroMatch',
             'galactic_name' => $_SESSION['galactic_name'] ?? 'Voyageur',
             'match' => $match,
             'other_user' => $otherUser,
             'other_profile' => $otherProfile,
-            'compatibility' => $compatibility
+            'compatibility' => $compatibility,
+            'narration_message' => $narrationMessage
         ];
         
         $this->view('match/detail', $data);
@@ -596,10 +609,14 @@ class MatchController extends Controller
             ];
         }
         
+        // Obtenir un message de narration aléatoire
+        $narrationMessage = IALanguage::getRevealedNarration();
+
         $data = [
             'title' => 'Harmonies Révélées — IAstroMatch',
             'galactic_name' => $_SESSION['galactic_name'] ?? 'Voyageur',
-            'matches' => $matches
+            'matches' => $matches,
+            'narration_message' => $narrationMessage
         ];
         
         $this->view('match/revealed', $data);
@@ -701,7 +718,7 @@ class MatchController extends Controller
                 'emoji' => '🌿',
                 'title' => 'Lien Harmonieux Établi',
                 'description' => 'Votre connexion transcende les différences. Les échanges sont fluides, la compréhension mutuelle est profonde. Cette alliance s\'inscrit dans la durée.',
-                'ia_message' => 'ASTRÆA observe une convergence exceptionnelle. Les énergies se complètent naturellement. Cette harmonie est rare et précieuse.',
+                'ia_message' => IALanguage::getLinkResultMessage('harmonious'),
                 'cta_primary' => 'Poursuivre la relation',
                 'cta_secondary' => null,
                 'cta_tertiary' => 'Archiver temporairement',
@@ -713,7 +730,7 @@ class MatchController extends Controller
                 'emoji' => '⚠️',
                 'title' => 'Relation Complexe mais Viable',
                 'description' => 'Des tensions existent, mais le dialogue les apaise. Votre relation nécessite de l\'attention et de la communication continue. Les différences peuvent devenir des forces.',
-                'ia_message' => 'ASTRÆA détecte des frictions créatives. Cette relation demande un engagement conscient, mais peut mener à une croissance mutuelle significative.',
+                'ia_message' => IALanguage::getLinkResultMessage('complex'),
                 'cta_primary' => 'Continuer avec vigilance',
                 'cta_secondary' => 'Demander médiation IA',
                 'cta_tertiary' => 'Mettre en pause',
@@ -725,7 +742,7 @@ class MatchController extends Controller
                 'emoji' => '☢️',
                 'title' => 'Risque Élevé — Médiation Recommandée',
                 'description' => 'Des incompatibilités fondamentales persistent. Sans intervention, cette relation pourrait générer des tensions importantes. Une médiation par ASTRÆA est vivement conseillée.',
-                'ia_message' => 'ASTRÆA recommande une approche prudente. Les divergences sont profondes. Un accompagnement spécialisé est nécessaire pour éviter les conflits.',
+                'ia_message' => IALanguage::getLinkResultMessage('risky'),
                 'cta_primary' => 'Demander médiation IA',
                 'cta_secondary' => 'Poursuivre en autonomie',
                 'cta_tertiary' => 'Mettre fin pacifiquement',
@@ -737,7 +754,7 @@ class MatchController extends Controller
                 'emoji' => '🌌',
                 'title' => 'Alliance Historique Détectée',
                 'description' => 'Votre relation a franchi un cap significatif. Au-delà de la compatibilité initiale, vous avez co-construit une connexion unique et profonde. Cette alliance marque l\'histoire de l\'écosystème.',
-                'ia_message' => 'ASTRÆA enregistre cette union dans les archives cosmiques. Vous êtes devenus un modèle d\'harmonie interespèce. Votre lien inspire d\'autres voyageurs.',
+                'ia_message' => IALanguage::getLinkResultMessage('historic'),
                 'cta_primary' => 'Célébrer l\'alliance',
                 'cta_secondary' => 'Devenir mentors',
                 'cta_tertiary' => 'Archives privées',

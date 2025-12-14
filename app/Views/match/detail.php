@@ -8,7 +8,7 @@
             </svg>
         </a>
         
-        <div class="ia-orb-container" id="ia-orb-narrator" data-narration="Je vous présente une entité fascinante, <?= htmlspecialchars($other_user['galactic_name']) ?>. Laissez-vous guider par l'essence de cette connexion potentielle.">
+        <div class="ia-orb-container" id="ia-orb-narrator" data-narration="<?= htmlspecialchars($narration_message) ?>">
             <div class="ia-orb-ring ring-1"></div>
             <div class="ia-orb-ring ring-2"></div>
             <div class="ia-orb-ring ring-3"></div>

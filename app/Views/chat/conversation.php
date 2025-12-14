@@ -108,7 +108,7 @@
                     <div class="revelation-content">
                         <h3 class="revelation-title">✨ Révélation Cosmique ✨</h3>
                         <p class="revelation-text">
-                            <strong>ASTRÆA :</strong> La compréhension mutuelle atteint un seuil suffisant. Révélation autorisée.
+                            <strong>ASTRÆA :</strong> <?= \App\Core\IALanguage::getChatIntervention('revelation') ?>
                         </p>
                         <p class="revelation-subtext">
                             La forme véritable de <?= htmlspecialchars($other_user['galactic_name']) ?> vous est maintenant accessible.
@@ -138,21 +138,21 @@
                 $iaInterventions = [];
                 
                 if ($messageIndex === 1) {
-                    $iaInterventions[] = "Bienvenue dans cet espace d'échange. Prenez le temps de vous découvrir mutuellement.";
+                    $iaInterventions[] = \App\Core\IALanguage::getChatIntervention('welcome');
                 } elseif ($messageIndex === 3) {
-                    $iaInterventions[] = "Les premiers échanges sont prometteurs. Continuez à cultiver cette connexion avec authenticité.";
+                    $iaInterventions[] = \App\Core\IALanguage::getChatIntervention('progress_early');
                 } elseif ($messageIndex === 6) {
-                    $iaInterventions[] = "Votre dialogue s'approfondit. La confiance se construit progressivement.";
+                    $iaInterventions[] = \App\Core\IALanguage::getChatIntervention('progress_mid');
                 } elseif ($messageIndex === 10) {
-                    $iaInterventions[] = "Vous avez établi un lien significatif. L'harmonie entre vous atteint son apogée.";
+                    $iaInterventions[] = \App\Core\IALanguage::getChatIntervention('progress_complete');
                 }
                 
-                // Détection de mots potentiellement problématiques (simulation)
+                // Détection de mots potentiellement problématiques
                 $content = strtolower($msg['content']);
-                $warningWords = ['guerre', 'conflit', 'détruire', 'haïr', 'attaquer', 'ennemi'];
+                $warningWords = ['guerre', 'conflit', 'détruire', 'haïr', 'attaquer', 'ennemi', 'violent', 'hostile'];
                 foreach ($warningWords as $word) {
                     if (strpos($content, $word) !== false) {
-                        $iaInterventions[] = "⚠️ Attention : certaines expressions peuvent être perçues comme hostiles. Privilégiez un langage constructif.";
+                        $iaInterventions[] = \App\Core\IALanguage::getChatIntervention('warning_hostile');
                         break;
                     }
                 }
@@ -301,19 +301,72 @@ function createIAIntervention(text) {
     return interventionDiv;
 }
 
+// Messages IA disponibles (synchronisés avec le backend)
+const iaMessages = {
+    welcome: [
+        "Bienvenue dans cet espace d'échange. Prenez le temps de vous découvrir mutuellement.",
+        "Cet espace est dédié à votre connexion. Laissez la conversation se déployer naturellement.",
+        "Vous entrez dans un lieu d'échange authentique. ASTRÆA veille à l'harmonie de vos échanges.",
+        "Le dialogue s'ouvre entre vos deux essences. Exprimez-vous avec authenticité et ouverture.",
+        "Ce canal de communication est maintenant actif. Que vos mots reflètent votre véritable nature."
+    ],
+    progress_early: [
+        "Les premiers échanges sont prometteurs. Continuez à cultiver cette connexion avec authenticité.",
+        "Votre dialogue s'établit harmonieusement. Les bases d'une connexion solide se dessinent.",
+        "Je perçois une résonance positive entre vous. Cette relation a du potentiel.",
+        "Les premières vibrations sont encourageantes. Vous créez ensemble un espace de confiance.",
+        "Votre communication trouve naturellement son rythme. C'est un excellent signe de compatibilité."
+    ],
+    progress_mid: [
+        "Votre dialogue s'approfondit. La confiance se construit progressivement.",
+        "Les échanges gagnent en profondeur. Vous apprenez à vous connaître mutuellement.",
+        "Une compréhension mutuelle émerge. Cette connexion se renforce à chaque message.",
+        "Je constate une évolution remarquable dans vos échanges. Les barrières s'estompent naturellement.",
+        "Vos fréquences s'harmonisent. Le dialogue atteint un niveau de qualité notable."
+    ],
+    progress_complete: [
+        "Vous avez établi un lien significatif. L'harmonie entre vous atteint son apogée.",
+        "Cette connexion a mûri admirablement. Vous avez franchi un seuil important.",
+        "Votre relation témoigne d'une harmonie profonde. C'est un modèle d'échange interespèce.",
+        "Le niveau de compréhension atteint est remarquable. Vous avez co-créé une connexion d'exception.",
+        "Votre dialogue a transcendé les différences. Cette alliance est maintenant pleinement établie."
+    ],
+    warning_hostile: [
+        "⚠️ Attention : certaines expressions peuvent être perçues comme hostiles. Privilégiez un langage constructif.",
+        "⚠️ Je détecte une tension dans les mots. Reformulez avec bienveillance pour préserver l'harmonie.",
+        "⚠️ Cette formulation pourrait créer un malentendu. Optez pour une communication plus douce.",
+        "⚠️ Alerte diplomatique : le ton employé risque de générer un conflit. Recentrez-vous sur l'intention positive.",
+        "⚠️ Je perçois une dissonance potentielle. Reformulez pour favoriser la compréhension mutuelle."
+    ],
+    revelation: [
+        "La compréhension mutuelle atteint un seuil suffisant. Révélation autorisée.",
+        "Le niveau de confiance permet désormais la révélation. Vous êtes prêt·e·s.",
+        "Les échanges ont prouvé la solidité de votre connexion. La révélation est accordée.",
+        "Le voile peut maintenant tomber. Vous avez démontré une harmonie suffisante pour cette étape.",
+        "La maturité de votre dialogue justifie la révélation. Le moment est venu."
+    ]
+};
+
+// Fonction utilitaire pour obtenir un message aléatoire
+function getRandomIAMessage(context) {
+    if (!iaMessages[context]) return null;
+    const messages = iaMessages[context];
+    return messages[Math.floor(Math.random() * messages.length)];
+}
+
 // Générer les interventions IA contextuelles
 function generateIAInterventions(msg, messageIndex) {
     const interventions = [];
     
     // Interventions basées sur le nombre de messages
     if (messageIndex === 1) {
-        interventions.push("Bienvenue dans cet espace d'échange. Prenez le temps de vous découvrir mutuellement.");
+        interventions.push(getRandomIAMessage('welcome'));
     } else if (messageIndex === 3) {
-        interventions.push("Les premiers échanges sont prometteurs. Continuez à cultiver cette connexion avec authenticité.");
+        interventions.push(getRandomIAMessage('progress_early'));
     } else if (messageIndex === 6) {
-        interventions.push("Votre dialogue s'approfondit. La confiance se construit progressivement.");
+        interventions.push(getRandomIAMessage('progress_mid'));
     } else if (messageIndex === 10) {
-        interventions.push("Vous avez établi un lien significatif. L'harmonie entre vous atteint son apogée.");
+        interventions.push(getRandomIAMessage('progress_complete'));
     }
     
     // Détection de mots potentiellement problématiques
@@ -322,12 +375,12 @@ function generateIAInterventions(msg, messageIndex) {
     
     for (const word of warningWords) {
         if (content.includes(word)) {
-            interventions.push("⚠️ Attention : certaines expressions peuvent être perçues comme hostiles. Privilégiez un langage constructif.");
+            interventions.push(getRandomIAMessage('warning_hostile'));
             break;
         }
     }
     
-    return interventions;
+    return interventions.filter(i => i !== null);
 }
 
 // Créer le message de révélation
@@ -335,6 +388,9 @@ function createRevelationMessage(otherUserName) {
     const revelationDiv = document.createElement('div');
     revelationDiv.className = 'revelation-message';
     revelationDiv.id = 'revelation-message';
+    
+    // Sélectionner un message de révélation aléatoire
+    const revelationMessage = getRandomIAMessage('revelation') || "La compréhension mutuelle atteint un seuil suffisant. Révélation autorisée.";
     
     revelationDiv.innerHTML = `
         <div class="revelation-glow"></div>
@@ -348,7 +404,7 @@ function createRevelationMessage(otherUserName) {
         <div class="revelation-content">
             <h3 class="revelation-title">✨ Révélation Cosmique ✨</h3>
             <p class="revelation-text">
-                <strong>ASTRÆA :</strong> La compréhension mutuelle atteint un seuil suffisant. Révélation autorisée.
+                <strong>ASTRÆA :</strong> ${escapeHtml(revelationMessage)}
             </p>
             <p class="revelation-subtext">
                 La forme véritable de ${escapeHtml(otherUserName)} vous est maintenant accessible.

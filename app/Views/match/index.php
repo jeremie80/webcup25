@@ -15,7 +15,7 @@
     
     <!-- En-tête avec IA -->
     <header class="match-header">
-        <div class="ia-orb-container" data-narration="Bienvenue dans l'espace des harmonies cosmiques. J'ai analysé les compatibilités entre votre essence et celle d'autres voyageurs. Chaque rencontre est unique, certaines seront fluides, d'autres vous défieront.">
+        <div class="ia-orb-container" data-narration="<?= htmlspecialchars($narration_message) ?>">
             <div class="ia-orb-ring ring-1"></div>
             <div class="ia-orb-ring ring-2"></div>
             <div class="ia-orb-ring ring-3"></div>
@@ -40,8 +40,8 @@
         <!-- Aucun match disponible -->
         <article class="no-matches">
             <div class="no-matches-icon">🌌</div>
-            <h2>Aucune harmonie détectée pour le moment</h2>
-            <p>L'écosystème est encore jeune. Revenez bientôt pour découvrir de nouvelles connexions.</p>
+            <h2><?= htmlspecialchars($no_match_message['title']) ?></h2>
+            <p><?= htmlspecialchars($no_match_message['description']) ?></p>
         </article>
     <?php else: ?>
         <!-- Grille de cartes de profils -->
@@ -132,10 +132,10 @@
                         </div>
                     </div>
                     
-                    <!-- Description IA -->
+                    <!-- Description IA (aléatoire) -->
                     <div class="match-description">
                         <p class="ia-analysis">
-                            <strong>ASTRÆA:</strong> <?php echo htmlspecialchars($compat['description']); ?>
+                            <strong>ASTRÆA:</strong> <?php echo htmlspecialchars(\App\Core\IALanguage::getCompatibilityDescription($compat['type'])); ?>
                         </p>
                     </div>
                     

@@ -15,7 +15,7 @@
     
     <!-- En-tête avec IA -->
     <header class="match-header">
-        <div class="ia-orb-container" data-narration="Voici vos harmonies révélées. Ces connexions mutuelles sont le fruit d'une acceptation réciproque. Vous pouvez maintenant échanger librement avec ces voyageurs.">
+        <div class="ia-orb-container" data-narration="<?= htmlspecialchars($narration_message) ?>">
             <div class="ia-orb-ring ring-1"></div>
             <div class="ia-orb-ring ring-2"></div>
             <div class="ia-orb-ring ring-3"></div>
@@ -138,10 +138,10 @@
                         </div>
                     </div>
                     
-                    <!-- Description IA -->
+                    <!-- Description IA (aléatoire) -->
                     <div class="match-description">
                         <p class="ia-analysis">
-                            <strong>ASTRÆA:</strong> <?php echo htmlspecialchars($compat['description']); ?>
+                            <strong>ASTRÆA:</strong> <?php echo htmlspecialchars(\App\Core\IALanguage::getCompatibilityDescription($compat['type'])); ?>
                         </p>
                     </div>
                     

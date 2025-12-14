@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\IALanguage;
 use App\Models\Profile;
 use App\Models\User;
 use App\Models\MatchModel;
@@ -140,42 +141,20 @@ class DashboardController extends Controller
      */
     private function generateIAMessage($score, $galacticName, $totalRevealed, $totalMessages)
     {
+        // Déterminer le type de score
+        $scoreType = 'beginning';
         if ($score >= 90) {
-            return [
-                'type' => 'excellence',
-                'title' => '🌌 Ambassadeur·ice Cosmique',
-                'message' => "Votre contribution renforce l'équilibre galactique, <strong>{$galacticName}</strong>. Vous incarnez l'harmonie interespèce et inspirez de nombreux voyageurs. L'écosystème rayonne grâce à votre présence.",
-                'icon' => '🌟'
-            ];
+            $scoreType = 'excellence';
         } elseif ($score >= 70) {
-            return [
-                'type' => 'excellent',
-                'title' => '🌿 Bâtisseur·se de Ponts',
-                'message' => "Votre diplomatie est remarquable, <strong>{$galacticName}</strong>. Vous tissez des liens authentiques entre les mondes. Votre engagement enrichit l'écosystème solarpunk.",
-                'icon' => '✨'
-            ];
+            $scoreType = 'excellent';
         } elseif ($score >= 50) {
-            return [
-                'type' => 'good',
-                'title' => '🌱 Explorateur·ice Engagé·e',
-                'message' => "Vous progressez avec intention, <strong>{$galacticName}</strong>. Chaque connexion que vous cultivez contribue à l'harmonie collective. Continuez sur cette voie.",
-                'icon' => '🌸'
-            ];
+            $scoreType = 'good';
         } elseif ($score >= 30) {
-            return [
-                'type' => 'emerging',
-                'title' => '🌾 Voyageur·se en Éveil',
-                'message' => "Vos premiers pas sont encourageants, <strong>{$galacticName}</strong>. L'écosystème s'ouvre à vous. Prenez le temps d'explorer les connexions possibles.",
-                'icon' => '🌿'
-            ];
-        } else {
-            return [
-                'type' => 'beginning',
-                'title' => '🌱 Nouveau·lle Arrivant·e',
-                'message' => "Bienvenue dans l'écosystème, <strong>{$galacticName}</strong>. Votre voyage ne fait que commencer. ASTRÆA vous accompagne dans vos premières rencontres.",
-                'icon' => '🌱'
-            ];
+            $scoreType = 'emerging';
         }
+
+        // Obtenir un message aléatoire depuis IALanguage
+        return IALanguage::getDashboardMessage($scoreType, $galacticName);
     }
 }
 
