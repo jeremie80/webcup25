@@ -23,4 +23,3 @@ if (!$hideHeader):
     </nav>
 </header>
 <?php endif; ?>
-

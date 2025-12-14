@@ -24,4 +24,3 @@ if (!$hideIA):
     </div>
 </aside>
 <?php endif; ?>
-
