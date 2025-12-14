@@ -1,5 +1,4 @@
 <?php 
-// Masquer ASTRÆA sur la page d'accueil (elle est intégrée dans le contenu)
 $hideIA = isset($hideIA) ? $hideIA : false;
 if (!$hideIA): 
 ?>
@@ -7,12 +6,22 @@ if (!$hideIA):
     <p class="ia-text">
         Je suis ASTRÆA, votre guide bienveillant. Je vous accompagne dans votre recherche d'harmonie.
     </p>
-    <button class="ia-circle" aria-label="Ouvrir ASTRÆA">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M12 1v6m0 6v6m6-7h-6m-6 0h6"></path>
-        </svg>
-    </button>
+    
+    <!-- Orbe IA lumineuse -->
+    <div class="ia-orb-widget">
+        <div class="ia-orb-ring-widget ring-1"></div>
+        <div class="ia-orb-ring-widget ring-2"></div>
+        <div class="ia-orb-ring-widget ring-3"></div>
+        
+        <div class="ia-orb-core-widget">
+            <div class="particle-widget particle-1"></div>
+            <div class="particle-widget particle-2"></div>
+            <div class="particle-widget particle-3"></div>
+            <div class="particle-widget particle-4"></div>
+            <div class="particle-widget particle-5"></div>
+            <div class="particle-widget particle-6"></div>
+        </div>
+    </div>
 </aside>
 <?php endif; ?>
 
