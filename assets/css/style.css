@@ -1,3 +1,955 @@
-body{
-    background-color: black;
+/* ============================================
+   IAstroMatch - Solarpunk Design System
+   ============================================ */
+
+/* Variables CSS - Palette Solarpunk */
+:root {
+    /* Couleurs principales */
+    --primary-green: #5FB3A2;
+    --primary-soft: #A8E6CF;
+    --solar-light: #F6F7EB;
+    --solar-glow: #FFE8A3;
+    --sky-blue: #7EC8E3;
+    --earth-sand: #E8DCC4;
+    
+    /* Couleurs d'état */
+    --harmonious: #7ED957;
+    --unstable: #FFD166;
+    --improbable: #9D8DF1;
+    --dangerous: #F28482;
+    
+    /* Typographie */
+    --font-main: 'Manrope', 'Inter', sans-serif;
+    --font-title: 'DM Sans', 'Sora', sans-serif;
+    
+    /* Espacement */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --spacing-xxl: 4rem;
+    
+    /* Border Radius */
+    --radius-sm: 12px;
+    --radius-md: 24px;
+    --radius-full: 999px;
+    
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 300ms ease;
+    --transition-slow: 600ms ease;
+    --transition-page: 800ms ease;
+    
+    /* Ombres */
+    --shadow-sm: 0 2px 10px rgba(95, 179, 162, 0.1);
+    --shadow-md: 0 4px 20px rgba(95, 179, 162, 0.2);
+    --shadow-lg: 0 8px 30px rgba(95, 179, 162, 0.25);
+    --shadow-xl: 0 12px 40px rgba(95, 179, 162, 0.3);
 }
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    line-height: 1.6;
+    color: #2d3436;
+    background: linear-gradient(135deg, var(--solar-light) 0%, var(--earth-sand) 100%);
+    min-height: 100vh;
+    font-weight: 400;
+}
+
+/* Layout moderne avec CSS Grid */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    display: grid;
+    gap: var(--spacing-xl);
+}
+
+/* ============================================
+   Header / Navigation - Solarpunk
+   ============================================ */
+
+.main-header {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-md) 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(95, 179, 162, 0.15);
+}
+
+.navbar {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--spacing-lg);
+}
+
+.logo a {
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-green);
+    text-decoration: none;
+    transition: all var(--transition-normal);
+    letter-spacing: 0.5px;
+}
+
+.logo a:hover {
+    color: var(--primary-soft);
+    transform: translateY(-2px);
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #2d3436;
+    font-weight: 500;
+    transition: all var(--transition-normal);
+    position: relative;
+    font-size: 0.95rem;
+}
+
+.nav-menu a:hover {
+    color: var(--primary-green);
+}
+
+.nav-menu a::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-green), var(--primary-soft));
+    transition: width var(--transition-normal);
+    border-radius: var(--radius-full);
+}
+
+.nav-menu a:hover::after {
+    width: 100%;
+}
+
+/* ============================================
+   ÉCRAN 0 — Portail d'Entrée Split (IA + Prompteur)
+   ============================================ */
+
+.portal-split {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 45% 55%;
+    overflow: hidden;
+}
+
+/* ============================================
+   PARTIE GAUCHE : IA ASTRÆA
+   ============================================ */
+
+.portal-ia-side {
+    background: linear-gradient(135deg, var(--primary-soft) 0%, var(--sky-blue) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xxl);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Conteneur de l'orbe IA */
+.ia-orb-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Anneaux lumineux animés */
+.ia-orb-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: breathe 4s ease-in-out infinite;
+}
+
+.ring-1 {
+    width: 350px;
+    height: 350px;
+    animation-delay: 0s;
+}
+
+.ring-2 {
+    width: 280px;
+    height: 280px;
+    animation-delay: 1.3s;
+    border-width: 3px;
+}
+
+.ring-3 {
+    width: 210px;
+    height: 210px;
+    animation-delay: 2.6s;
+}
+
+@keyframes breathe {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+}
+
+/* Cœur de l'orbe */
+.ia-orb-core {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, var(--primary-green) 100%);
+    border-radius: 50%;
+    box-shadow: 
+        0 0 40px rgba(95, 179, 162, 0.6),
+        0 0 80px rgba(95, 179, 162, 0.4),
+        inset 0 0 40px rgba(255, 255, 255, 0.5);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+/* Particules flottantes */
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: float 8s ease-in-out infinite;
+}
+
+.particle-1 { top: 20%; left: 10%; animation-delay: 0s; }
+.particle-2 { top: 40%; right: 15%; animation-delay: 1.5s; }
+.particle-3 { bottom: 30%; left: 20%; animation-delay: 3s; }
+.particle-4 { top: 60%; right: 10%; animation-delay: 4.5s; }
+.particle-5 { bottom: 20%; right: 25%; animation-delay: 6s; }
+.particle-6 { top: 30%; left: 30%; animation-delay: 7.5s; }
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.3;
+    }
+    25% {
+        transform: translateY(-30px) translateX(20px);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translateY(-50px) translateX(-10px);
+        opacity: 0.5;
+    }
+    75% {
+        transform: translateY(-20px) translateX(-30px);
+        opacity: 0.7;
+    }
+}
+
+/* Nom de l'IA */
+.ia-name {
+    position: absolute;
+    bottom: -80px;
+    text-align: center;
+    color: white;
+}
+
+.ia-name h2 {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.ia-name p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Contrôles audio */
+.audio-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.audio-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-green);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: all var(--transition-normal);
+}
+
+.audio-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+}
+
+.audio-btn.active {
+    background: var(--primary-green);
+    color: white;
+}
+
+.audio-label {
+    color: white;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* ============================================
+   PARTIE DROITE : Prompteur (texte défilant)
+   ============================================ */
+
+.portal-text-side {
+    background: linear-gradient(135deg, var(--solar-light) 0%, var(--earth-sand) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xxl);
+    position: relative;
+    overflow: hidden;
+}
+
+.prompter-container {
+    max-width: 600px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xxl);
+    height: 100%;
+    justify-content: space-between;
+    padding: var(--spacing-xxl) 0;
+}
+
+/* Header du prompteur */
+.prompter-header {
+    text-align: center;
+    animation: fadeInUp var(--transition-page) ease;
+}
+
+.portal-title {
+    font-family: var(--font-title);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 600;
+    color: var(--primary-green);
+    letter-spacing: 2px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.portal-subtitle {
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    color: #636e72;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+/* Texte du prompteur */
+.prompter-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    overflow-y: auto;
+    padding-right: var(--spacing-sm);
+    
+    /* Scrollbar personnalisée */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-soft) transparent;
+}
+
+.prompter-text::-webkit-scrollbar {
+    width: 6px;
+}
+
+.prompter-text::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.prompter-text::-webkit-scrollbar-thumb {
+    background: var(--primary-soft);
+    border-radius: 3px;
+}
+
+/* Lignes de texte avec animation d'apparition progressive */
+.text-line {
+    font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+    color: #2d3436;
+    line-height: 1.9;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideInText 1s ease forwards;
+}
+
+.text-line[data-index="0"] { animation-delay: 0.3s; }
+.text-line[data-index="1"] { animation-delay: 0.6s; }
+.text-line[data-index="2"] { animation-delay: 0.9s; }
+.text-line[data-index="3"] { animation-delay: 1.2s; }
+.text-line[data-index="4"] { animation-delay: 1.5s; }
+.text-line[data-index="5"] { animation-delay: 1.8s; }
+.text-line[data-index="6"] { animation-delay: 2.1s; }
+.text-line[data-index="7"] { animation-delay: 2.4s; }
+
+@keyframes slideInText {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style spécial pour les phrases importantes */
+.text-line[data-index="2"],
+.text-line[data-index="4"] {
+    color: var(--primary-green);
+    font-weight: 500;
+    font-style: italic;
+}
+
+/* Footer du prompteur */
+.prompter-footer {
+    text-align: center;
+    animation: fadeInUp var(--transition-page) ease 2.7s backwards;
+}
+
+/* Texte narratif */
+.portal-narrative {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    text-align: center;
+    animation: fadeInUp var(--transition-page) ease 300ms backwards;
+}
+
+.narrative-intro {
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    color: var(--primary-green);
+    font-weight: 500;
+    line-height: 1.6;
+    font-style: italic;
+}
+
+.narrative-body {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    color: #636e72;
+    line-height: 1.9;
+    font-weight: 400;
+}
+
+.narrative-closing {
+    font-size: clamp(1rem, 2vw, 1.1rem);
+    color: var(--primary-green);
+    line-height: 1.8;
+    margin-top: var(--spacing-sm);
+}
+
+/* Voix de l'IA */
+.ia-voice {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--primary-soft);
+    margin: var(--spacing-lg) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    animation: fadeInUp var(--transition-page) ease 600ms backwards;
+}
+
+.ia-voice svg {
+    color: var(--primary-green);
+    align-self: center;
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.ia-voice p {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    color: #2d3436;
+    font-style: italic;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.ia-voice cite {
+    font-size: 0.9rem;
+    color: var(--primary-green);
+    font-style: normal;
+    font-weight: 600;
+    align-self: flex-end;
+}
+
+/* Footer du portail */
+.portal-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    animation: fadeInUp var(--transition-page) ease 900ms backwards;
+}
+
+.portal-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: 20px 50px;
+    min-height: 60px;
+    border: none;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--primary-green), var(--primary-soft));
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 500;
+    font-family: var(--font-main);
+    text-decoration: none;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.portal-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left var(--transition-slow);
+}
+
+.portal-cta:hover::before {
+    left: 100%;
+}
+
+.portal-cta:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: var(--shadow-lg);
+}
+
+.portal-cta svg {
+    transition: transform var(--transition-normal);
+}
+
+.portal-cta:hover svg {
+    transform: translateX(5px);
+}
+
+.portal-note {
+    font-size: 0.85rem;
+    color: #636e72;
+    opacity: 0.7;
+    font-style: italic;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Responsive pour portal split */
+@media (max-width: 1024px) {
+    .portal-split {
+        grid-template-columns: 1fr;
+        grid-template-rows: 40vh 60vh;
+    }
+    
+    .ia-orb-container {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .ring-1 { width: 220px; height: 220px; }
+    .ring-2 { width: 170px; height: 170px; }
+    .ring-3 { width: 120px; height: 120px; }
+    
+    .ia-orb-core {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .ia-name h2 {
+        font-size: 1.5rem;
+    }
+    
+    .prompter-container {
+        padding: var(--spacing-lg) 0;
+    }
+    
+    .text-line {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .portal-split {
+        grid-template-rows: 35vh 65vh;
+    }
+    
+    .portal-ia-side {
+        gap: var(--spacing-lg);
+    }
+    
+    .portal-text-side {
+        padding: var(--spacing-lg);
+    }
+    
+    .portal-cta {
+        padding: 16px 40px;
+        font-size: 1rem;
+    }
+}
+
+/* ============================================
+   Features - Solarpunk Cards (CSS Grid)
+   ============================================ */
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+}
+
+.feature {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(95, 179, 162, 0.2);
+    transition: all var(--transition-normal);
+    animation: fadeInUp var(--transition-page) ease backwards;
+    
+    /* Flexbox pour alignement interne */
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.feature:nth-child(1) { animation-delay: 300ms; }
+.feature:nth-child(2) { animation-delay: 400ms; }
+.feature:nth-child(3) { animation-delay: 500ms; }
+
+.feature:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-green);
+}
+
+.feature h3 {
+    font-family: var(--font-title);
+    color: var(--primary-green);
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.feature p {
+    color: #636e72;
+    line-height: 1.7;
+    font-weight: 400;
+}
+
+/* ============================================
+   Boutons - Solarpunk (forme pilule)
+   ============================================ */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 40px;
+    min-height: 48px;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all var(--transition-normal);
+    font-size: 1rem;
+    font-family: var(--font-main);
+    animation: fadeInUp var(--transition-page) ease 600ms backwards;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-green), var(--primary-soft));
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--sky-blue), var(--primary-soft));
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ============================================
+   Formulaires - Solarpunk
+   ============================================ */
+
+.form-group {
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #2d3436;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid rgba(95, 179, 162, 0.2);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    color: #2d3436;
+    font-size: 1rem;
+    font-family: var(--font-main);
+    transition: all var(--transition-normal);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: var(--shadow-md);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.form-group input::placeholder {
+    color: rgba(45, 52, 54, 0.4);
+}
+
+.form-help {
+    font-size: 0.85rem;
+    color: var(--primary-green);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* ============================================
+   Animations Solarpunk
+   ============================================ */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.02);
+    }
+}
+
+/* ============================================
+   IA ASTRÆA - Présence visuelle
+   ============================================ */
+
+.ia-container {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--spacing-sm);
+}
+
+.ia-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-soft), var(--primary-green));
+    box-shadow: 0 0 30px rgba(95, 179, 162, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    animation: pulse 3s ease infinite;
+}
+
+.ia-circle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 40px rgba(95, 179, 162, 0.7);
+}
+
+.ia-text {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    max-width: 300px;
+    box-shadow: var(--shadow-md);
+    font-style: italic;
+    color: #636e72;
+    display: none;
+}
+
+.ia-container:hover .ia-text {
+    display: block;
+    animation: fadeInUp var(--transition-normal) ease;
+}
+
+/* ============================================
+   Score de Compatibilité (cercles organiques)
+   ============================================ */
+
+.compatibility-score {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    align-items: center;
+    margin: var(--spacing-lg) 0;
+}
+
+.score-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    transition: all var(--transition-normal);
+}
+
+.score-circle.harmonious {
+    background: var(--harmonious);
+    box-shadow: 0 0 20px rgba(126, 217, 87, 0.5);
+}
+
+.score-circle.unstable {
+    background: var(--unstable);
+    box-shadow: 0 0 20px rgba(255, 209, 102, 0.5);
+    animation: pulse 2s ease infinite;
+}
+
+.score-circle.improbable {
+    background: var(--improbable);
+    box-shadow: 0 0 20px rgba(157, 141, 241, 0.5);
+}
+
+.score-circle.dangerous {
+    background: var(--dangerous);
+    box-shadow: 0 0 20px rgba(242, 132, 130, 0.5);
+    animation: pulse 1.5s ease infinite;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .nav-menu {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .intro-container h1 {
+        font-size: 2.5rem;
+    }
+
+    .intro-container {
+        padding: 4rem 2rem;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .ia-container {
+        bottom: 1rem;
+        right: 1rem;
+    }
+}
+
+/* ============================================
+   Utilities
+   ============================================ */
+
+.text-center {
+    text-align: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
