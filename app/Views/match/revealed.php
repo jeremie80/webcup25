@@ -1,21 +1,9 @@
-<section class="match-container">
+<section class="portal-entrance-split">
     <div class="portal-glow"></div>
     
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="flash-message flash-success">
-            <?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
-        </div>
-    <?php endif; ?>
-    
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="flash-message flash-error">
-            <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
-        </div>
-    <?php endif; ?>
-    
-    <!-- En-tête avec IA -->
-    <header class="match-header">
-        <div class="ia-orb-container" data-narration="<?= htmlspecialchars($narration_message) ?>">
+    <!-- Partie gauche : IA -->
+    <aside class="portal-ia-side">
+        <div class="ia-orb-container" id="ia-orb-narrator" data-narration="<?= htmlspecialchars($narration_message) ?>">
             <div class="ia-orb-ring ring-1"></div>
             <div class="ia-orb-ring ring-2"></div>
             <div class="ia-orb-ring ring-3"></div>
@@ -30,22 +18,45 @@
             </div>
         </div>
         
-        <div class="match-header-text">
-            <h1 class="match-title">Harmonies Révélées</h1>
-            <p class="match-subtitle">Vos connexions mutuelles, <strong><?php echo htmlspecialchars($galactic_name); ?></strong></p>
+        <div class="ia-name">
+            <h2>ASTRÆA</h2>
+            <p>Harmonies Révélées</p>
         </div>
-    </header>
+        
+        <div class="ia-message">
+            <p>Les liens mutuels se dévoilent, <strong><?php echo htmlspecialchars($galactic_name); ?></strong>. Ces connexions ont été acceptées des deux côtés.</p>
+        </div>
+    </aside>
     
-    <?php if (empty($matches)): ?>
-        <!-- Aucune révélation -->
-        <article class="no-matches">
-            <div class="no-matches-icon">✨</div>
-            <h2>Aucune harmonie révélée pour le moment</h2>
-            <p>Les révélations apparaissent lorsque deux voyageurs s'acceptent mutuellement. Explorez les <a href="/match" class="link-primary">suggestions</a> pour trouver vos harmonies.</p>
-        </article>
-    <?php else: ?>
-        <!-- Grille de cartes révélées -->
-        <article class="matches-grid">
+    <!-- Partie droite : Contenu -->
+    <article class="portal-content-side">
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="flash-message flash-success">
+                <?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="flash-message flash-error">
+                <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
+        
+        <header class="portal-content-header">
+            <h1 class="intro-title">Harmonies Révélées</h1>
+            <p class="intro-subtitle">Vos connexions mutuelles</p>
+        </header>
+    
+        <?php if (empty($matches)): ?>
+            <!-- Aucune révélation -->
+            <div class="no-matches">
+                <div class="no-matches-icon">✨</div>
+                <h2>Aucune harmonie révélée pour le moment</h2>
+                <p>Les révélations apparaissent lorsque deux voyageurs s'acceptent mutuellement. Explorez les <a href="/match" class="link-primary">suggestions</a> pour trouver vos harmonies.</p>
+            </div>
+        <?php else: ?>
+            <!-- Grille de cartes révélées -->
+            <div class="matches-grid">
             <?php foreach ($matches as $match): ?>
                 <?php 
                     $user = $match['user'];
@@ -173,17 +184,18 @@
                     </div>
                 </div>
             <?php endforeach; ?>
-        </article>
-    <?php endif; ?>
-    
-    <!-- Lien vers suggestions -->
-    <div class="navigation-footer">
-        <a href="/match" class="btn btn-secondary">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 12H5M12 19l-7-7 7-7"></path>
-            </svg>
-            <span>Retour aux suggestions</span>
-        </a>
-    </div>
+            </div>
+        <?php endif; ?>
+        
+        <!-- Lien vers suggestions -->
+        <div class="navigation-footer">
+            <a href="/match" class="btn btn-secondary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"></path>
+                </svg>
+                <span>Retour aux suggestions</span>
+            </a>
+        </div>
+    </article>
 </section>
 

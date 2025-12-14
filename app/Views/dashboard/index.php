@@ -1,21 +1,9 @@
-<section class="dashboard-container">
+<section class="portal-entrance-split">
     <div class="portal-glow"></div>
     
-    <?php if (isset($flash_success)): ?>
-        <div class="flash-message flash-success">
-            <?php echo htmlspecialchars($flash_success); ?>
-        </div>
-    <?php endif; ?>
-    
-    <?php if (isset($flash_error)): ?>
-        <div class="flash-message flash-error">
-            <?php echo htmlspecialchars($flash_error); ?>
-        </div>
-    <?php endif; ?>
-    
-    <!-- En-tête avec IA -->
-    <header class="dashboard-header">
-        <div class="ia-orb-container" data-narration="Bienvenue sur votre tableau de bord, <?= htmlspecialchars($galactic_name) ?>. J'ai compilé un rapport complet de votre activité diplomatique dans l'écosystème.">
+    <!-- Partie gauche : IA -->
+    <aside class="portal-ia-side">
+        <div class="ia-orb-container" id="ia-orb-narrator" data-narration="Bienvenue sur votre tableau de bord, <?= htmlspecialchars($galactic_name) ?>. J'ai compilé un rapport complet de votre activité diplomatique dans l'écosystème.">
             <div class="ia-orb-ring ring-1"></div>
             <div class="ia-orb-ring ring-2"></div>
             <div class="ia-orb-ring ring-3"></div>
@@ -30,14 +18,37 @@
             </div>
         </div>
         
-        <div class="dashboard-header-text">
-            <h1 class="dashboard-title">Tableau de Bord Galactique</h1>
-            <p class="dashboard-subtitle">Vue d'ensemble de votre parcours, <strong><?= htmlspecialchars($galactic_name) ?></strong></p>
+        <div class="ia-name">
+            <h2>ASTRÆA</h2>
+            <p>Tableau de Bord</p>
         </div>
-    </header>
+        
+        <div class="ia-message">
+            <p>Votre contribution renforce l'équilibre galactique, <strong><?= htmlspecialchars($galactic_name) ?></strong>.</p>
+        </div>
+    </aside>
     
-    <!-- Message de l'IA (personnalisé selon le score) -->
-    <article class="ia-global-message ia-message-<?= $ia_message['type'] ?>">
+    <!-- Partie droite : Contenu -->
+    <article class="portal-content-side">
+        <?php if (isset($flash_success)): ?>
+            <div class="flash-message flash-success">
+                <?php echo htmlspecialchars($flash_success); ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (isset($flash_error)): ?>
+            <div class="flash-message flash-error">
+                <?php echo htmlspecialchars($flash_error); ?>
+            </div>
+        <?php endif; ?>
+        
+        <header class="portal-content-header">
+            <h1 class="intro-title">Tableau de Bord Galactique</h1>
+            <p class="intro-subtitle">Vue d'ensemble de votre parcours</p>
+        </header>
+        
+        <!-- Message de l'IA (personnalisé selon le score) -->
+        <div class="ia-global-message ia-message-<?= $ia_message['type'] ?>">
         <div class="ia-message-icon">
             <span class="ia-message-emoji"><?= $ia_message['icon'] ?></span>
         </div>
@@ -45,10 +56,10 @@
             <h2 class="ia-message-title"><?= htmlspecialchars($ia_message['title']) ?></h2>
             <p class="ia-message-text"><?= $ia_message['message'] ?></p>
         </div>
-    </article>
-    
-    <!-- État diplomatique global -->
-    <article class="diplomatic-state">
+        </div>
+        
+        <!-- État diplomatique global -->
+        <div class="diplomatic-state">
         <h2 class="section-title">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -142,10 +153,10 @@
                 </div>
             </div>
         </div>
-    </article>
-    
-    <!-- Historique des rencontres récentes -->
-    <article class="recent-encounters">
+        </div>
+        
+        <!-- Historique des rencontres récentes -->
+        <div class="recent-encounters">
         <h2 class="section-title">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 2v20M2 12h20"></path>
@@ -278,6 +289,7 @@
                 <h3>Mon Profil</h3>
             </a>
         </div>
-    </footer>
+        </footer>
+    </article>
 </section>
 

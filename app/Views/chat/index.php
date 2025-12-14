@@ -1,7 +1,8 @@
-<section class="chat-container">
+<section class="portal-entrance-split">
     <div class="portal-glow"></div>
     
-    <header class="chat-header">
+    <!-- Partie gauche : IA -->
+    <aside class="portal-ia-side">
         <div class="ia-orb-container" id="ia-orb-narrator" data-narration="Bienvenue dans l'espace d'échanges, <?= htmlspecialchars($galactic_name) ?>. Ici, vous pouvez converser avec les voyageurs avec qui vous avez établi une connexion mutuelle.">
             <div class="ia-orb-ring ring-1"></div>
             <div class="ia-orb-ring ring-2"></div>
@@ -15,18 +16,32 @@
                 <div class="particle particle-6"></div>
             </div>
         </div>
-        <h1 class="chat-title">Échanges Cosmiques</h1>
-        <p class="chat-subtitle">Vos conversations avec les harmonies révélées</p>
-    </header>
+        
+        <div class="ia-name">
+            <h2>ASTRÆA</h2>
+            <p>Échanges Cosmiques</p>
+        </div>
+        
+        <div class="ia-message">
+            <p>Vos conversations avec les harmonies révélées, <strong><?= htmlspecialchars($galactic_name) ?></strong>.</p>
+        </div>
+    </aside>
     
-    <?php if (empty($conversations)): ?>
-        <article class="no-conversations">
+    <!-- Partie droite : Contenu -->
+    <article class="portal-content-side">
+        <header class="portal-content-header">
+            <h1 class="intro-title">Échanges Cosmiques</h1>
+            <p class="intro-subtitle">Vos conversations avec les harmonies révélées</p>
+        </header>
+    
+        <?php if (empty($conversations)): ?>
+            <div class="no-conversations">
             <div class="no-conversations-icon">💬</div>
             <h2>Aucune conversation pour le moment</h2>
             <p>Les conversations apparaissent lorsque vous acceptez mutuellement une harmonie. Explorez les <a href="/match" class="link-primary">suggestions</a> pour trouver vos connexions.</p>
-        </article>
-    <?php else: ?>
-        <article class="conversations-list">
+            </div>
+        <?php else: ?>
+            <div class="conversations-list">
             <?php foreach ($conversations as $conv): ?>
                 <a href="/chat?match_id=<?= $conv['match_id'] ?>" class="conversation-card">
                     <div class="conversation-avatar">
@@ -60,10 +75,10 @@
                     </div>
                 </a>
             <?php endforeach; ?>
-        </article>
-    <?php endif; ?>
-    
-    <footer class="navigation-footer">
+            </div>
+        <?php endif; ?>
+        
+        <footer class="navigation-footer">
         <a href="/match/revealed" class="btn btn-secondary-outline">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -73,6 +88,7 @@
             </svg>
             <span>Voir mes Révélations</span>
         </a>
-    </footer>
+        </footer>
+    </article>
 </section>
 

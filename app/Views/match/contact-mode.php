@@ -1,7 +1,8 @@
-<section class="contact-mode-container">
+<section class="portal-entrance-split">
     <div class="portal-glow"></div>
     
-    <header class="contact-mode-header">
+    <!-- Partie gauche : IA -->
+    <aside class="portal-ia-side">
         <a href="/match/detail?id=<?= $match['id'] ?>" class="back-button">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 12H5M12 19l-7-7 7-7"></path>
@@ -22,19 +23,22 @@
             </div>
         </div>
         
-        <h1 class="contact-mode-title">Choix du Mode de Contact</h1>
-        <p class="contact-mode-subtitle">Comment souhaitez-vous établir cette connexion ?</p>
-    </header>
-    
-    <article class="contact-mode-content">
-        <!-- Introduction -->
-        <div class="contact-mode-intro">
-            <p class="intro-text">
-                Vous vous apprêtez à initier un premier contact avec <strong><?= htmlspecialchars($other_user['galactic_name']) ?></strong>. 
-                Le mode que vous choisirez déterminera la tonalité et la profondeur de votre première interaction.
-            </p>
+        <div class="ia-name">
+            <h2>ASTRÆA</h2>
+            <p>Choix du Mode de Contact</p>
         </div>
         
+        <div class="ia-message">
+            <p>Chaque mode reflète une intention. Choisissez celui qui résonne avec votre essence.</p>
+        </div>
+    </aside>
+    
+    <!-- Partie droite : Contenu -->
+    <article class="portal-content-side">
+        <header class="portal-content-header">
+            <h1 class="intro-title">Mode de Contact</h1>
+            <p class="intro-subtitle">Comment souhaitez-vous établir cette connexion avec <strong><?= htmlspecialchars($other_user['galactic_name']) ?></strong> ?</p>
+        </header>
         <!-- Les 3 modes de contact -->
         <div class="contact-modes-grid">
             <!-- Mode 1 : Message émotionnel -->

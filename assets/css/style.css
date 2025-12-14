@@ -60,13 +60,13 @@ body {
     line-height: 1.1;
     color: #2d3436;
     background: linear-gradient(135deg, var(--solar-light) 0%, var(--earth-sand) 100%);
-    min-height: 100vh;
+    /* min-height: 100vh; */
     font-weight: 400;
 }
 
 /* Layout moderne avec CSS Grid */
 .container {
-    max-width: 100vw;
+    /* max-width: 100vw; */
     margin: 0 auto;
     padding: var(--spacing-lg);
     display: grid;
@@ -1733,6 +1733,10 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    min-height: 300px;
 }
 
 .match-card:hover {

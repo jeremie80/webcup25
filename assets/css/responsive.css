@@ -1,0 +1,326 @@
+/* ============================================
+   SYSTÈME RESPONSIVE SIMPLIFIÉ - IAstroMatch
+   ============================================ */
+
+/* ==========================================
+   VARIABLES RESPONSIVE
+   ========================================== */
+
+:root {
+    /* Breakpoints */
+    --breakpoint-mobile: 768px;
+    --breakpoint-tablet: 1024px;
+    
+    /* Layout desktop : IA à droite, contenu à gauche */
+    --desktop-ia-width: 35%;
+    --desktop-content-width: 65%;
+    
+    /* Layout mobile : colonne unique */
+    --mobile-padding: 1rem;
+}
+
+/* ==========================================
+   LAYOUT PRINCIPAL (Desktop First)
+   ========================================== */
+
+/* Container principal avec IA à droite */
+.app-layout-with-ia {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Contenu principal (gauche sur desktop) */
+.app-content {
+    flex: 1;
+    width: var(--desktop-content-width);
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+}
+
+/* IA fixe à droite sur desktop */
+.app-ia-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: var(--desktop-ia-width);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    background: rgba(0, 0, 0, 0.02);
+    border-left: 1px solid rgba(95, 179, 162, 0.15);
+    z-index: 100;
+}
+
+/* ==========================================
+   HEADER RESPONSIVE
+   ========================================== */
+
+.main-header {
+    background: rgba(13, 27, 26, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(95, 179, 162, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Logo */
+.logo {
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.logo a {
+    color: var(--primary-green);
+    text-decoration: none;
+    transition: color var(--transition-normal);
+}
+
+.logo a:hover {
+    color: var(--primary-soft);
+}
+
+/* Menu desktop */
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: var(--spacing-md);
+    margin: 0;
+    padding: 0;
+}
+
+.nav-menu li a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--transition-normal);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+}
+
+.nav-menu li a:hover {
+    color: var(--primary-soft);
+    background: rgba(95, 179, 162, 0.1);
+}
+
+/* Burger menu (caché sur desktop) */
+.burger-menu {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1001;
+}
+
+.burger-line {
+    width: 28px;
+    height: 3px;
+    background: var(--primary-green);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Animation burger ouvert */
+.burger-menu.is-open .burger-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.burger-menu.is-open .burger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.burger-menu.is-open .burger-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ==========================================
+   RESPONSIVE MOBILE (< 768px)
+   ========================================== */
+
+@media (max-width: 768px) {
+    /* Layout mobile : colonne unique */
+    .app-layout-with-ia {
+        flex-direction: column;
+    }
+    
+    .app-content {
+        width: 100%;
+        padding: var(--mobile-padding);
+    }
+    
+    /* IA en position relative sur mobile */
+    .app-ia-sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: 40vh;
+        border-left: none;
+        border-bottom: 1px solid rgba(95, 179, 162, 0.15);
+        padding: var(--spacing-lg);
+    }
+    
+    /* Header mobile avec burger */
+    .navbar {
+        padding: var(--spacing-sm);
+    }
+    
+    /* Cacher le menu desktop */
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        flex-direction: column;
+        background: rgba(13, 27, 26, 0.98);
+        backdrop-filter: blur(20px);
+        padding: var(--spacing-xl) var(--spacing-lg);
+        border-left: 1px solid rgba(95, 179, 162, 0.3);
+        transition: right 0.3s ease;
+        gap: var(--spacing-sm);
+        z-index: 1000;
+    }
+    
+    .nav-menu.is-open {
+        right: 0;
+    }
+    
+    .nav-menu li {
+        width: 100%;
+    }
+    
+    .nav-menu li a {
+        display: block;
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--radius-md);
+    }
+    
+    /* Afficher le burger menu */
+    .burger-menu {
+        display: flex;
+    }
+    
+    /* Overlay pour fermer le menu */
+    .mobile-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    
+    .mobile-menu-overlay.is-visible {
+        opacity: 1;
+        pointer-events: all;
+    }
+}
+
+/* ==========================================
+   LAYOUTS SPÉCIFIQUES
+   ========================================== */
+
+/* Layout split (auth pages avec IA à gauche) */
+.portal-entrance-split {
+    display: flex;
+    min-height: 100vh;
+}
+
+.portal-ia-side {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    position: relative;
+}
+
+.portal-content-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--spacing-xl);
+}
+
+@media (max-width: 768px) {
+    .portal-entrance-split {
+        flex-direction: column;
+    }
+    
+    .portal-ia-side {
+        width: 100%;
+        min-height: 40vh;
+        padding: var(--spacing-lg);
+    }
+    
+    .portal-content-side {
+        padding: var(--spacing-lg) var(--mobile-padding);
+    }
+}
+
+/* ==========================================
+   UTILITAIRES RESPONSIVE
+   ========================================== */
+
+/* Masquer sur mobile */
+.hide-mobile {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+/* Masquer sur desktop */
+.hide-desktop {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .hide-desktop {
+        display: block !important;
+    }
+}
+
+/* Colonnes responsive */
+.responsive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+    .responsive-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+}
+

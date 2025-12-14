@@ -1,7 +1,8 @@
-<section class="match-detail-container pre-encounter">
+<section class="portal-entrance-split">
     <div class="portal-glow"></div>
     
-    <header class="match-detail-header">
+    <!-- Partie gauche : IA -->
+    <aside class="portal-ia-side">
         <a href="<?= ($match['status'] === 'revealed' || $match['status'] === 'accepted') ? '/match/revealed' : '/match' ?>" class="back-button">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 12H5M12 19l-7-7 7-7"></path>
@@ -22,11 +23,22 @@
             </div>
         </div>
         
-        <h1 class="match-detail-title">Entité en Observation</h1>
-        <p class="match-detail-subtitle">Pré-rencontre — L'essence avant l'apparence</p>
-    </header>
+        <div class="ia-name">
+            <h2>ASTRÆA</h2>
+            <p>Analyse Pré-Rencontre</p>
+        </div>
+        
+        <div class="ia-message">
+            <p>Observez l'essence avant l'apparence. Chaque détail révèle une facette de cette conscience.</p>
+        </div>
+    </aside>
     
-    <article class="match-detail-content">
+    <!-- Partie droite : Contenu -->
+    <article class="portal-content-side">
+        <header class="portal-content-header">
+            <h1 class="intro-title">Entité en Observation</h1>
+            <p class="intro-subtitle">Pré-rencontre — L'essence avant l'apparence</p>
+        </header>
         <!-- Indicateur de compatibilité visuel (sans %) -->
         <div class="compatibility-visual match-<?= $compatibility['type'] ?>">
             <div class="compat-rings">
@@ -251,7 +263,7 @@
         </div>
         
         <!-- CTA -->
-        <footer class="match-detail-actions pre-encounter-actions">
+        <footer class="match-detail-actions">
             <?php if ($match['status'] === 'suggested'): ?>
                 <a href="/match/contact-mode?match_id=<?= $match['id'] ?>" class="btn btn-initiate-contact">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

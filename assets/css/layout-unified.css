@@ -1,0 +1,276 @@
+/* ============================================
+   LAYOUT UNIFIÉ - IA FIXE À DROITE
+   ============================================ */
+
+/* ==========================================
+   STRUCTURE GLOBALE DESKTOP
+   ========================================== */
+
+@media (min-width: 769px) {
+    /* Container principal */
+    .portal-entrance-split {
+        display: flex;
+        flex-direction: row-reverse; /* IA à droite */
+        min-height: 100vh;
+        position: relative;
+    }
+    
+    /* IA fixe à droite avec marges */
+    .portal-ia-side {
+        position: fixed;
+        right: 0;
+        top: 10px;
+        bottom: 10px;
+        width: 50%;
+        height: calc(100vh - 20px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--spacing-xl);
+        overflow: hidden;
+        z-index: 100;
+    }
+    
+    /* Contenu scrollable à gauche */
+    .portal-content-side {
+        width: 50%;
+        margin-right: 50%;
+        min-height: 100vh;
+        padding: var(--spacing-xl);
+        overflow-y: auto;
+    }
+    
+    /* Pour les pages avec header visible */
+    body:not([data-hide-header]) .portal-ia-side {
+        top: calc(80px + 10px); /* Hauteur header + marge */
+        height: calc(100vh - 80px - 20px);
+    }
+}
+
+/* ==========================================
+   STRUCTURE MOBILE
+   ========================================== */
+
+@media (max-width: 768px) {
+    /* Layout en colonne */
+    .portal-entrance-split {
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    /* IA en haut, position normale */
+    .portal-ia-side {
+        position: relative;
+        width: 100%;
+        min-height: 40vh;
+        padding: var(--spacing-lg);
+        top: auto;
+        bottom: auto;
+        right: auto;
+    }
+    
+    /* Contenu en dessous */
+    .portal-content-side {
+        width: 100%;
+        margin-right: 0;
+        padding: var(--spacing-lg) var(--mobile-padding);
+    }
+}
+
+/* ==========================================
+   AJUSTEMENTS SPÉCIFIQUES PAR PAGE
+   ========================================== */
+
+/* Pages avec grilles de cartes (match) */
+@media (min-width: 769px) {
+    body:has(.matches-grid) .portal-content-side {
+        padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-xs) 0;
+        z-index: 150;
+        position: relative;
+        width: 50%;
+        margin-right: 50%;
+        box-sizing: border-box;
+        overflow-y: auto;
+    }
+    
+    .matches-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+        position: relative;
+        z-index: 150;
+        width: 100%;
+        padding-left: 0;
+    }
+    
+    .match-card {
+        position: relative;
+        z-index: 150;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+}
+
+@media (max-width: 768px) {
+    .matches-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+}
+
+/* Pages dashboard */
+@media (min-width: 769px) {
+    body:has(.diplomatic-state) .portal-content-side {
+        padding-top: var(--spacing-lg);
+        padding-bottom: var(--spacing-xl);
+    }
+}
+
+/* Page de détail match */
+@media (min-width: 769px) {
+    body:has(.match-detail-content) .portal-content-side {
+        padding-top: var(--spacing-lg);
+    }
+}
+
+/* ==========================================
+   ÉLÉMENTS IA
+   ========================================== */
+
+.ia-name {
+    text-align: center;
+    margin-top: var(--spacing-lg);
+}
+
+.ia-name h2 {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    color: var(--primary-soft);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+}
+
+.ia-name p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+}
+
+.ia-message {
+    text-align: center;
+    margin-top: var(--spacing-md);
+    padding: 0 var(--spacing-md);
+}
+
+.ia-message p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* ==========================================
+   HEADER CONTENU
+   ========================================== */
+
+.portal-content-header,
+.form-header {
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+}
+
+.intro-title,
+.form-title {
+    font-family: var(--font-title);
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--primary-soft);
+    margin-bottom: var(--spacing-sm);
+}
+
+.intro-subtitle,
+.form-subtitle {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ==========================================
+   BOUTON RETOUR
+   ========================================== */
+
+.back-button {
+    position: absolute;
+    top: var(--spacing-md);
+    left: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(95, 179, 162, 0.1);
+    border: 1px solid rgba(95, 179, 162, 0.3);
+    border-radius: 50%;
+    color: var(--primary-soft);
+    transition: all var(--transition-normal);
+    z-index: 10;
+}
+
+.back-button:hover {
+    background: rgba(95, 179, 162, 0.2);
+    border-color: var(--primary-soft);
+    transform: translateX(-3px);
+}
+
+@media (max-width: 768px) {
+    .back-button {
+        position: fixed;
+        top: var(--spacing-sm);
+        left: var(--spacing-sm);
+        z-index: 1001;
+    }
+}
+
+/* ==========================================
+   NAVIGATION FOOTER
+   ========================================== */
+
+.navigation-footer {
+    margin-top: var(--spacing-xl);
+    text-align: center;
+}
+
+/* ==========================================
+   MESSAGES FLASH
+   ========================================== */
+
+.flash-message {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+    animation: slideInDown 0.3s ease;
+}
+
+.flash-success {
+    background: rgba(95, 179, 162, 0.1);
+    border: 1px solid var(--primary-soft);
+    color: var(--primary-soft);
+}
+
+.flash-error {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid #ff6b6b;
+    color: #ff6b6b;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

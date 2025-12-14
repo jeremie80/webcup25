@@ -1,7 +1,8 @@
-<section class="profile-container">
+<section class="portal-entrance-split">
     <div class="portal-glow"></div>
     
-    <header class="profile-header">
+    <!-- Partie gauche : IA -->
+    <aside class="portal-ia-side">
         <div class="ia-orb-container" id="ia-orb-narrator" data-narration="Bienvenue, <?= htmlspecialchars($galactic_name) ?>. Voici votre signature cosmique, l'empreinte unique de votre essence dans l'univers IAstroMatch.">
             <div class="ia-orb-ring ring-1"></div>
             <div class="ia-orb-ring ring-2"></div>
@@ -15,11 +16,25 @@
                 <div class="particle particle-6"></div>
             </div>
         </div>
-        <h1 class="profile-title">Mon Profil Cosmique</h1>
-        <p class="profile-subtitle">Votre signature unique dans l'écosystème</p>
-    </header>
+        
+        <div class="ia-name">
+            <h2>ASTRÆA</h2>
+            <p>Profil Cosmique</p>
+        </div>
+        
+        <div class="ia-message">
+            <p>Votre signature unique dans l'écosystème, <strong><?= htmlspecialchars($galactic_name) ?></strong>.</p>
+        </div>
+    </aside>
     
-    <div class="profile-content">
+    <!-- Partie droite : Contenu -->
+    <article class="portal-content-side">
+        <header class="portal-content-header">
+            <h1 class="intro-title">Mon Profil Cosmique</h1>
+            <p class="intro-subtitle">Votre signature unique dans l'écosystème</p>
+        </header>
+        
+        <div class="profile-content">
         <!-- Section identité -->
         <div class="profile-section">
             <h2 class="section-title">Identité Galactique</h2>
@@ -186,6 +201,7 @@
                 <span>Mes Connexions Révélées</span>
             </a>
         </footer>
-    </div>
+        </div>
+    </article>
 </section>
 

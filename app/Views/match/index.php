@@ -1,21 +1,9 @@
-<section class="match-container">
+<section class="portal-entrance-split">
     <div class="portal-glow"></div>
     
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="flash-message flash-success">
-            <?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
-        </div>
-    <?php endif; ?>
-    
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="flash-message flash-error">
-            <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
-        </div>
-    <?php endif; ?>
-    
-    <!-- En-tête avec IA -->
-    <header class="match-header">
-        <div class="ia-orb-container" data-narration="<?= htmlspecialchars($narration_message) ?>">
+    <!-- Partie gauche : IA -->
+    <aside class="portal-ia-side">
+        <div class="ia-orb-container" id="ia-orb-narrator" data-narration="<?= htmlspecialchars($narration_message) ?>">
             <div class="ia-orb-ring ring-1"></div>
             <div class="ia-orb-ring ring-2"></div>
             <div class="ia-orb-ring ring-3"></div>
@@ -30,22 +18,45 @@
             </div>
         </div>
         
-        <div class="match-header-text">
-            <h1 class="match-title">Harmonies Cosmiques</h1>
-            <p class="match-subtitle">Découvrez les voyageurs compatibles avec votre essence, <strong><?php echo htmlspecialchars($galactic_name); ?></strong></p>
+        <div class="ia-name">
+            <h2>ASTRÆA</h2>
+            <p>Harmonies Cosmiques</p>
         </div>
-    </header>
+        
+        <div class="ia-message">
+            <p>Les affinités se révèlent, <strong><?php echo htmlspecialchars($galactic_name); ?></strong>. Ces voyageurs résonnent avec votre essence.</p>
+        </div>
+    </aside>
     
-    <?php if (empty($matches)): ?>
-        <!-- Aucun match disponible -->
-        <article class="no-matches">
-            <div class="no-matches-icon">🌌</div>
-            <h2><?= htmlspecialchars($no_match_message['title']) ?></h2>
-            <p><?= htmlspecialchars($no_match_message['description']) ?></p>
-        </article>
-    <?php else: ?>
-        <!-- Grille de cartes de profils -->
-        <article class="matches-grid">
+    <!-- Partie droite : Contenu -->
+    <article class="portal-content-side">
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="flash-message flash-success">
+                <?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="flash-message flash-error">
+                <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
+        
+        <header class="portal-content-header">
+            <h1 class="intro-title">Harmonies Cosmiques</h1>
+            <p class="intro-subtitle">Découvrez les voyageurs compatibles avec votre essence</p>
+        </header>
+    
+        <?php if (empty($matches)): ?>
+            <!-- Aucun match disponible -->
+            <div class="no-matches">
+                <div class="no-matches-icon">🌌</div>
+                <h2><?= htmlspecialchars($no_match_message['title']) ?></h2>
+                <p><?= htmlspecialchars($no_match_message['description']) ?></p>
+            </div>
+        <?php else: ?>
+            <!-- Grille de cartes de profils -->
+            <div class="matches-grid">
             <?php foreach ($matches as $match): ?>
                 <?php 
                     $user = $match['user'];
@@ -163,7 +174,8 @@
                     </div>
                 </div>
             <?php endforeach; ?>
-        </article>
-    <?php endif; ?>
+            </div>
+        <?php endif; ?>
+    </article>
 </section>
 

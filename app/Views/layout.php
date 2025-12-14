@@ -12,11 +12,13 @@
     
     <!-- CSS -->
     <link rel="stylesheet" href="/assets/css/style.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="/assets/css/responsive.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="/assets/css/layout-unified.css?v=<?= time() ?>">
     
     <!-- jQuery depuis CDN -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
-<body>
+<body <?php if(isset($hideHeader) && $hideHeader): ?>data-hide-header="true"<?php endif; ?>>
     <?php 
     // Afficher le header sauf si explicitement masqué
     $hideHeader = isset($hideHeader) ? $hideHeader : false;
