@@ -101,6 +101,18 @@ class ChatController extends Controller
             $revelationTriggered = true;
         }
         
+        // Récupérer le mode de contact de l'utilisateur actuel
+        $isProfileA = ($match['profile_a_id'] == $_SESSION['profile_id']);
+        $myContactMode = $isProfileA ? ($match['contact_mode_a'] ?? null) : ($match['contact_mode_b'] ?? null);
+        $otherContactMode = $isProfileA ? ($match['contact_mode_b'] ?? null) : ($match['contact_mode_a'] ?? null);
+        
+        // Libellés des modes de contact
+        $contactModeLabels = [
+            'emotional' => 'Message Émotionnel',
+            'diplomatic' => 'Protocole Diplomatique',
+            'guided' => 'Dialogue Guidé par l\'IA'
+        ];
+        
         $data = [
             'title' => 'Conversation — IAstroMatch',
             'galactic_name' => $_SESSION['galactic_name'] ?? 'Voyageur',
@@ -113,6 +125,9 @@ class ChatController extends Controller
             'trust_level' => $trustLevel,
             'message_count' => $messageCount,
             'revelation_triggered' => $revelationTriggered,
+            'my_contact_mode' => $myContactMode,
+            'other_contact_mode' => $otherContactMode,
+            'contact_mode_labels' => $contactModeLabels,
             'is_revealed' => ($match['status'] === 'revealed')
         ];
         

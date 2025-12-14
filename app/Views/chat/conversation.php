@@ -49,9 +49,50 @@
             <div>
                 <h2 class="conversation-user-name"><?= htmlspecialchars($other_user['galactic_name']) ?></h2>
                 <p class="conversation-user-origin"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $other_user['origin_type']))) ?></p>
+            </div>
+        </div>
+        
+        <!-- Affichage des modes de contact choisis -->
+        <?php if (!empty($my_contact_mode) || !empty($other_contact_mode)): ?>
+            <div class="contact-modes-info">
+                <?php if (!empty($my_contact_mode)): ?>
+                    <div class="mode-badge mode-<?= $my_contact_mode ?>">
+                        <span class="mode-label">Votre mode :</span>
+                        <span class="mode-name">
+                            <?php 
+                                $modeIcons = [
+                                    'emotional' => '💌',
+                                    'diplomatic' => '🕊️',
+                                    'guided' => '🌱'
+                                ];
+                                echo $modeIcons[$my_contact_mode] . ' ' . $contact_mode_labels[$my_contact_mode];
+                            ?>
+                        </span>
+                    </div>
+                <?php endif; ?>
                 
-                <!-- Jauge de confiance interespèce -->
-                <div class="trust-gauge">
+                <?php if (!empty($other_contact_mode)): ?>
+                    <div class="mode-badge mode-<?= $other_contact_mode ?>">
+                        <span class="mode-label">Mode de <?= htmlspecialchars($other_user['galactic_name']) ?> :</span>
+                        <span class="mode-name">
+                            <?php 
+                                $modeIcons = [
+                                    'emotional' => '💌',
+                                    'diplomatic' => '🕊️',
+                                    'guided' => '🌱'
+                                ];
+                                echo $modeIcons[$other_contact_mode] . ' ' . $contact_mode_labels[$other_contact_mode];
+                            ?>
+                        </span>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+    </header>
+    
+    <!-- Niveau de confiance interespèce -->
+    <section class="trust-section">
+        <div class="trust-gauge">
                     <div class="trust-gauge-label">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -139,10 +180,41 @@
                 
                 if ($messageIndex === 1) {
                     $iaInterventions[] = \App\Core\IALanguage::getChatIntervention('welcome');
+                    
+                    // Interventions spécifiques selon le mode de contact
+                    if (!empty($my_contact_mode)) {
+                        if ($my_contact_mode === 'emotional') {
+                            $iaInterventions[] = "Vous avez choisi le <strong>Message Émotionnel</strong>. Exprimez-vous avec authenticité et sincérité.";
+                        } elseif ($my_contact_mode === 'diplomatic') {
+                            $iaInterventions[] = "Vous avez opté pour le <strong>Protocole Diplomatique</strong>. Je veillerai à maintenir une communication courtoise et structurée.";
+                        } elseif ($my_contact_mode === 'guided') {
+                            $iaInterventions[] = "Vous avez sélectionné le <strong>Dialogue Guidé</strong>. Je vous accompagnerai avec des suggestions pour faciliter vos échanges.";
+                        }
+                    }
                 } elseif ($messageIndex === 3) {
                     $iaInterventions[] = \App\Core\IALanguage::getChatIntervention('progress_early');
+                    
+                    // Suggestion IA pour le mode guidé
+                    if (!empty($my_contact_mode) && $my_contact_mode === 'guided') {
+                        $suggestions = [
+                            "💡 Suggestion : Partagez une expérience marquante de votre civilisation.",
+                            "💡 Suggestion : Demandez à votre interlocuteur·ice ce qui le·la passionne le plus.",
+                            "💡 Suggestion : Explorez vos visions communes pour l'avenir cosmique."
+                        ];
+                        $iaInterventions[] = $suggestions[array_rand($suggestions)];
+                    }
                 } elseif ($messageIndex === 6) {
                     $iaInterventions[] = \App\Core\IALanguage::getChatIntervention('progress_mid');
+                    
+                    // Suggestion IA pour le mode guidé
+                    if (!empty($my_contact_mode) && $my_contact_mode === 'guided') {
+                        $suggestions = [
+                            "💡 Suggestion : Échangez sur vos valeurs fondamentales et ce qui vous anime.",
+                            "💡 Suggestion : Partagez vos rêves et aspirations pour créer des ponts.",
+                            "💡 Suggestion : Discutez des défis que vos civilisations respectives ont surmontés."
+                        ];
+                        $iaInterventions[] = $suggestions[array_rand($suggestions)];
+                    }
                 } elseif ($messageIndex === 10) {
                     $iaInterventions[] = \App\Core\IALanguage::getChatIntervention('progress_complete');
                 }
@@ -152,7 +224,14 @@
                 $warningWords = ['guerre', 'conflit', 'détruire', 'haïr', 'attaquer', 'ennemi', 'violent', 'hostile'];
                 foreach ($warningWords as $word) {
                     if (strpos($content, $word) !== false) {
-                        $iaInterventions[] = \App\Core\IALanguage::getChatIntervention('warning_hostile');
+                        $warningMessage = \App\Core\IALanguage::getChatIntervention('warning_hostile');
+                        
+                        // Adapter le message selon le mode diplomatique
+                        if (!empty($my_contact_mode) && $my_contact_mode === 'diplomatic') {
+                            $warningMessage .= " Le protocole diplomatique encourage la reformulation constructive.";
+                        }
+                        
+                        $iaInterventions[] = $warningMessage;
                         break;
                     }
                 }

@@ -484,11 +484,8 @@ class MatchController extends Controller
             $contactMode = 'emotional';
         }
         
-        // Accepter le match
-        if ($matchModel->accept($matchId, $_SESSION['profile_id'])) {
-            // Stocker le mode de contact choisi en session (pourra être utilisé plus tard dans le chat)
-            $_SESSION['contact_mode_' . $matchId] = $contactMode;
-            
+        // Accepter le match avec le mode de contact
+        if ($matchModel->accept($matchId, $_SESSION['profile_id'], $contactMode)) {
             $modeLabels = [
                 'emotional' => 'Message Émotionnel',
                 'diplomatic' => 'Protocole Diplomatique',

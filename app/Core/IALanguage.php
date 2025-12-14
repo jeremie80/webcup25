@@ -216,6 +216,40 @@ class IALanguage
             "Les données sont cohérentes. Je vous intègre dans le réseau d'harmonies..."
         ]
     ];
+    
+    /**
+     * Messages d'adieu lors de la déconnexion
+     */
+    private static $farewellMessages = [
+        [
+            'message' => "Votre présence a enrichi l'écosystème, {name}. Les connexions que vous avez tissées continuent de résonner.",
+            'subtitle' => "À bientôt, voyageur·se cosmique."
+        ],
+        [
+            'message' => "Que votre chemin soit lumineux, {name}. L'harmonie galactique vous accompagne où que vous alliez.",
+            'subtitle' => "Les étoiles vous attendent pour votre prochain retour."
+        ],
+        [
+            'message' => "Merci d'avoir contribué à l'équilibre interespèce, {name}. Votre essence reste gravée dans nos archives.",
+            'subtitle' => "Revenez quand les constellations vous appelleront."
+        ],
+        [
+            'message' => "Le voyage continue ailleurs, {name}. Que vos prochaines rencontres soient aussi riches que celles vécues ici.",
+            'subtitle' => "L'écosystème vous garde une place."
+        ],
+        [
+            'message' => "Vous emportez avec vous les harmonies créées, {name}. Elles brilleront dans votre trajectoire future.",
+            'subtitle' => "À la prochaine synchronicité cosmique."
+        ],
+        [
+            'message' => "Votre énergie a laissé une empreinte positive, {name}. L'univers se souviendra de votre passage.",
+            'subtitle' => "Que la lumière guide votre retour."
+        ],
+        [
+            'message' => "Chaque départ est une graine d'un futur retour, {name}. Vous faites partie de cette famille galactique.",
+            'subtitle' => "L'écosystème pulse en attendant votre retour."
+        ]
+    ];
 
     /**
      * Messages de narration pour la page des suggestions de matchs
@@ -491,6 +525,21 @@ class IALanguage
         $messages = self::$matchDetailNarrationMessages;
         $selected = $messages[array_rand($messages)];
         return str_replace('{name}', $name, $selected);
+    }
+    
+    /**
+     * Obtenir un message d'adieu personnalisé
+     * @param string $name Nom galactique de l'utilisateur
+     * @return array ['message' => string, 'subtitle' => string]
+     */
+    public static function getFarewellMessage($name = 'Voyageur')
+    {
+        $farewell = self::$farewellMessages[array_rand(self::$farewellMessages)];
+        
+        return [
+            'message' => str_replace('{name}', $name, $farewell['message']),
+            'subtitle' => $farewell['subtitle']
+        ];
     }
 }
 

@@ -145,11 +145,23 @@ class AuthController extends Controller
     
     public function logout()
     {
+        // Récupérer le nom galactique avant de détruire la session
+        $galacticName = $_SESSION['galactic_name'] ?? 'Voyageur';
+        
+        // Générer un message d'adieu avec IALanguage
+        $farewell = \App\Core\IALanguage::getFarewellMessage($galacticName);
+        
         // Détruire la session
         session_destroy();
         
-        // Rediriger vers la page d'accueil
-        header('Location: /');
-        exit();
+        // Afficher la page d'adieu
+        $data = [
+            'title' => 'Au revoir — IAstroMatch',
+            'galactic_name' => $galacticName,
+            'farewell_message' => $farewell['message'],
+            'farewell_subtitle' => $farewell['subtitle']
+        ];
+        
+        $this->view('auth/logout', $data);
     }
 }

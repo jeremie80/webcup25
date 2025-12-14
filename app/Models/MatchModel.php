@@ -270,7 +270,7 @@ class MatchModel
     /**
      * Accepter un match (côté d'un profil)
      */
-    public function accept($matchId, $profileId)
+    public function accept($matchId, $profileId, $contactMode = null)
     {
         $match = $this->findById($matchId);
         
@@ -283,9 +283,32 @@ class MatchModel
             return false;
         }
         
+        // Déterminer quelle colonne de mode de contact mettre à jour
+        $contactModeColumn = ($match['profile_a_id'] == $profileId) ? 'contact_mode_a' : 'contact_mode_b';
+        
+        // Valider le mode de contact
+        $validModes = ['emotional', 'diplomatic', 'guided'];
+        if ($contactMode && !in_array($contactMode, $validModes)) {
+            $contactMode = null;
+        }
+        
         // Si le match est déjà accepté ou révélé, on change vers "revealed"
         if ($match['status'] === 'accepted' || $match['status'] === 'suggested') {
-            return $this->updateStatus($matchId, 'accepted');
+            // Mettre à jour le statut et le mode de contact si fourni
+            if ($contactMode) {
+                $stmt = $this->db->prepare(
+                    "UPDATE matches 
+                     SET status = 'accepted', {$contactModeColumn} = :contact_mode
+                     WHERE id = :id"
+                );
+                
+                return $stmt->execute([
+                    'id' => $matchId,
+                    'contact_mode' => $contactMode
+                ]);
+            } else {
+                return $this->updateStatus($matchId, 'accepted');
+            }
         }
         
         return false;
