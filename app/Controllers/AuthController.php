@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Models\User;
+use App\Models\Profile;
 
 class AuthController extends Controller
 {
@@ -80,5 +81,75 @@ class AuthController extends Controller
                 'origin_type' => $originType
             ]);
         }
+    }
+    
+    public function login()
+    {
+        $data = [
+            'title' => 'Connexion — IAstroMatch'
+        ];
+        
+        $this->view('auth/login', $data);
+    }
+    
+    public function authenticate()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /auth/login');
+            exit();
+        }
+        
+        $galacticName = trim($_POST['galactic_name'] ?? '');
+        
+        // Validation
+        if (empty($galacticName)) {
+            $this->view('auth/login', [
+                'error' => 'Veuillez saisir votre nom galactique.',
+                'galactic_name' => $galacticName
+            ]);
+            return;
+        }
+        
+        // Rechercher l'utilisateur par nom galactique
+        $userModel = new User();
+        $user = $userModel->findByGalacticName($galacticName);
+        
+        if (!$user) {
+            $this->view('auth/login', [
+                'error' => 'Aucune signature cosmique trouvée pour ce nom galactique.',
+                'galactic_name' => $galacticName
+            ]);
+            return;
+        }
+        
+        // Connexion réussie - Créer la session
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['galactic_name'] = $user['galactic_name'];
+        $_SESSION['origin_type'] = $user['origin_type'];
+        $_SESSION['bio_signature'] = $user['bio_signature'];
+        
+        // Vérifier si l'utilisateur a déjà un profil
+        $profileModel = new Profile();
+        $profile = $profileModel->findByUserId($user['id']);
+        
+        if ($profile) {
+            $_SESSION['profile_id'] = $profile['id'];
+            // Rediriger vers les suggestions de match
+            header('Location: /match');
+        } else {
+            // Rediriger vers la création de profil
+            header('Location: /profile/create');
+        }
+        exit();
+    }
+    
+    public function logout()
+    {
+        // Détruire la session
+        session_destroy();
+        
+        // Rediriger vers la page d'accueil
+        header('Location: /');
+        exit();
     }
 }

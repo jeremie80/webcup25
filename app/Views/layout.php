@@ -17,9 +17,13 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
-    <?php if (isset($showHeader) && $showHeader !== false): ?>
-        <?php include __DIR__ . '/partials/header.php'; ?>
-    <?php endif; ?>
+    <?php 
+    // Afficher le header sauf si explicitement masqué
+    $hideHeader = isset($hideHeader) ? $hideHeader : false;
+    if (!$hideHeader): 
+        include __DIR__ . '/partials/header.php'; 
+    endif; 
+    ?>
     
     <main class="container">
         <?= $content ?>

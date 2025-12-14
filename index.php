@@ -21,8 +21,11 @@ $router = new Router();
 // Définir les routes
 $router->get('/', 'HomeController@index');
 $router->get('/auth/start', 'AuthController@start');
-$router->post('/auth/login', 'AuthController@login');
+$router->get('/auth/login', 'AuthController@login');
+$router->post('/auth/authenticate', 'AuthController@authenticate');
 $router->post('/auth/register', 'AuthController@register');
+$router->get('/auth/logout', 'AuthController@logout');
+$router->get('/profile', 'ProfileController@show');
 $router->get('/profile/create', 'ProfileController@create');
 $router->post('/profile/store', 'ProfileController@store');
 $router->get('/profile/analysis', 'ProfileController@analysis');
@@ -33,6 +36,7 @@ $router->get('/match/revealed', 'MatchController@revealed');
 $router->post('/match/accept', 'MatchController@accept');
 $router->post('/match/reject', 'MatchController@reject');
 $router->get('/chat', 'ChatController@index');
+$router->get('/chat/messages', 'ChatController@getMessages');
 $router->post('/chat/send', 'ChatController@send');
 
 // Dispatcher la requête

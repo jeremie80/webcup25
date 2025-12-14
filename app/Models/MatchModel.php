@@ -54,7 +54,57 @@ class MatchModel
     }
     
     /**
-     * Récupérer les matchs suggérés pour un profil
+     * Récupérer les matchs suggérés pour un profil avec JOIN
+     */
+    public function getSuggestedMatchesWithDetails($profileId)
+    {
+        $stmt = $this->db->prepare(
+            "SELECT 
+                m.id as match_id,
+                m.profile_a_id,
+                m.profile_b_id,
+                m.compatibility_type,
+                m.compatibility_score,
+                m.ia_summary,
+                m.status,
+                m.created_at,
+                IF(m.profile_a_id = :profile_id1, m.profile_b_id, m.profile_a_id) as other_profile_id,
+                p.id as profile_id,
+                p.user_id as other_user_id,
+                p.atmosphere_type,
+                p.communication_mode,
+                p.tech_level,
+                p.core_value,
+                p.avatar_path,
+                u.id as user_id,
+                u.galactic_name,
+                u.origin_type,
+                u.bio_signature
+             FROM matches m
+             INNER JOIN profiles p ON p.id = IF(m.profile_a_id = :profile_id2, m.profile_b_id, m.profile_a_id)
+             INNER JOIN users u ON u.id = p.user_id
+             WHERE (m.profile_a_id = :profile_id3 OR m.profile_b_id = :profile_id4)
+             AND m.status = 'suggested'
+             ORDER BY 
+                 CASE m.compatibility_type
+                     WHEN 'harmonious' THEN 1
+                     WHEN 'unstable' THEN 2
+                     WHEN 'improbable' THEN 3
+                     WHEN 'dangerous' THEN 4
+                 END,
+                 m.compatibility_score DESC"
+        );
+        $stmt->execute([
+            'profile_id1' => $profileId,
+            'profile_id2' => $profileId,
+            'profile_id3' => $profileId,
+            'profile_id4' => $profileId
+        ]);
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Récupérer les matchs suggérés pour un profil (version simple)
      */
     public function getSuggestedMatches($profileId)
     {
@@ -76,7 +126,50 @@ class MatchModel
     }
     
     /**
-     * Récupérer les matchs acceptés (révélés mutuellement)
+     * Récupérer les matchs acceptés (révélés mutuellement) avec JOIN
+     */
+    public function getAcceptedMatchesWithDetails($profileId)
+    {
+        $stmt = $this->db->prepare(
+            "SELECT 
+                m.id as match_id,
+                m.profile_a_id,
+                m.profile_b_id,
+                m.compatibility_type,
+                m.compatibility_score,
+                m.ia_summary,
+                m.status,
+                m.created_at,
+                IF(m.profile_a_id = :profile_id1, m.profile_b_id, m.profile_a_id) as other_profile_id,
+                p.id as profile_id,
+                p.user_id as other_user_id,
+                p.atmosphere_type,
+                p.communication_mode,
+                p.tech_level,
+                p.core_value,
+                p.avatar_path,
+                u.id as user_id,
+                u.galactic_name,
+                u.origin_type,
+                u.bio_signature
+             FROM matches m
+             INNER JOIN profiles p ON p.id = IF(m.profile_a_id = :profile_id2, m.profile_b_id, m.profile_a_id)
+             INNER JOIN users u ON u.id = p.user_id
+             WHERE (m.profile_a_id = :profile_id3 OR m.profile_b_id = :profile_id4)
+             AND (m.status = 'revealed' OR m.status = 'accepted')
+             ORDER BY m.created_at DESC"
+        );
+        $stmt->execute([
+            'profile_id1' => $profileId,
+            'profile_id2' => $profileId,
+            'profile_id3' => $profileId,
+            'profile_id4' => $profileId
+        ]);
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Récupérer les matchs acceptés (révélés mutuellement) - version simple
      */
     public function getAcceptedMatches($profileId)
     {

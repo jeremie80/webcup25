@@ -8,6 +8,45 @@ use App\Models\User;
 
 class ProfileController extends Controller
 {
+    public function show()
+    {
+        // Vérifier que l'utilisateur est connecté
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /auth/start');
+            exit();
+        }
+        
+        // Récupérer l'utilisateur
+        $userModel = new User();
+        $user = $userModel->findById($_SESSION['user_id']);
+        
+        if (!$user) {
+            header('Location: /auth/start');
+            exit();
+        }
+        
+        // Récupérer le profil
+        $profileModel = new Profile();
+        $profile = $profileModel->findByUserId($_SESSION['user_id']);
+        
+        if (!$profile) {
+            header('Location: /profile/create');
+            exit();
+        }
+        
+        // Stocker l'ID du profil en session
+        $_SESSION['profile_id'] = $profile['id'];
+        
+        $data = [
+            'title' => 'Mon Profil Cosmique — IAstroMatch',
+            'user' => $user,
+            'profile' => $profile,
+            'galactic_name' => $user['galactic_name']
+        ];
+        
+        $this->view('profile/show', $data);
+    }
+    
     public function create()
     {
         // Vérifier que l'utilisateur est connecté
@@ -122,10 +161,17 @@ class ProfileController extends Controller
             exit();
         }
         
-        // Vérifier que l'utilisateur a un profil
+        // Vérifier que l'utilisateur a un profil et le stocker en session si nécessaire
         if (!isset($_SESSION['profile_id'])) {
-            header('Location: /profile/create');
-            exit();
+            $profileModel = new Profile();
+            $userProfile = $profileModel->findByUserId($_SESSION['user_id']);
+            
+            if (!$userProfile) {
+                header('Location: /profile/create');
+                exit();
+            }
+            
+            $_SESSION['profile_id'] = $userProfile['id'];
         }
         
         $data = [
@@ -139,9 +185,22 @@ class ProfileController extends Controller
     public function validate()
     {
         // Vérifier que l'utilisateur est connecté
-        if (!isset($_SESSION['user_id']) || !isset($_SESSION['profile_id'])) {
+        if (!isset($_SESSION['user_id'])) {
             header('Location: /auth/start');
             exit();
+        }
+        
+        // Vérifier que l'utilisateur a un profil et le stocker en session si nécessaire
+        if (!isset($_SESSION['profile_id'])) {
+            $profileModel = new Profile();
+            $userProfile = $profileModel->findByUserId($_SESSION['user_id']);
+            
+            if (!$userProfile) {
+                header('Location: /profile/create');
+                exit();
+            }
+            
+            $_SESSION['profile_id'] = $userProfile['id'];
         }
         
         // Marquer le profil comme validé (simulation)

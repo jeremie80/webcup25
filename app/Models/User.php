@@ -48,10 +48,10 @@ class User
     /**
      * Récupérer un utilisateur par nom galactique
      */
-    public function findByGalacticName($name)
+    public function findByGalacticName($galacticName)
     {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE galactic_name = :name");
-        $stmt->execute(['name' => $name]);
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE galactic_name = :galactic_name");
+        $stmt->execute(['galactic_name' => $galacticName]);
         return $stmt->fetch();
     }
     

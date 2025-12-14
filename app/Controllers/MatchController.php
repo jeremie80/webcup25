@@ -26,33 +26,42 @@ class MatchController extends Controller
             exit();
         }
         
+        // Stocker l'ID du profil en session pour utilisation ultérieure
+        $_SESSION['profile_id'] = $userProfile['id'];
+        
         // Générer les suggestions de match si elles n'existent pas
         $this->generateMatchSuggestions($userProfile['id']);
         
-        // Récupérer les matchs suggérés depuis la base de données
+        // Récupérer les matchs suggérés avec JOIN (1 seule requête optimisée)
         $matchModel = new MatchModel();
-        $suggestedMatches = $matchModel->getSuggestedMatches($userProfile['id']);
+        $suggestedMatches = $matchModel->getSuggestedMatchesWithDetails($userProfile['id']);
         
-        // Enrichir les données des matchs avec les infos utilisateur et profil
+        // Transformer les données
         $matches = [];
-        $userModel = new User();
         
         foreach ($suggestedMatches as $match) {
-            // Déterminer l'autre profil
-            $otherProfileId = ($match['profile_a_id'] == $userProfile['id']) 
-                ? $match['profile_b_id'] 
-                : $match['profile_a_id'];
-            
-            $otherProfile = $profileModel->findById($otherProfileId);
-            if (!$otherProfile) continue;
-            
-            $otherUser = $userModel->findById($otherProfile['user_id']);
-            if (!$otherUser) continue;
+            // Vérifier que les données utilisateur sont présentes
+            if (empty($match['user_id']) || empty($match['galactic_name'])) {
+                continue;
+            }
             
             $matches[] = [
-                'match_id' => $match['id'],
-                'user' => $otherUser,
-                'profile' => $otherProfile,
+                'match_id' => $match['match_id'],
+                'user' => [
+                    'id' => $match['user_id'],
+                    'galactic_name' => $match['galactic_name'],
+                    'origin_type' => $match['origin_type'],
+                    'bio_signature' => $match['bio_signature']
+                ],
+                'profile' => [
+                    'id' => $match['profile_id'],
+                    'user_id' => $match['other_user_id'],
+                    'atmosphere_type' => $match['atmosphere_type'],
+                    'communication_mode' => $match['communication_mode'],
+                    'tech_level' => $match['tech_level'],
+                    'core_value' => $match['core_value'],
+                    'avatar_path' => $match['avatar_path']
+                ],
                 'compatibility' => [
                     'score' => $match['compatibility_score'],
                     'type' => $match['compatibility_type'],
@@ -248,8 +257,91 @@ class MatchController extends Controller
     
     public function detail()
     {
-        // TODO: Afficher les détails d'un match
-        echo "<h1>Détail du match</h1>";
+        // Vérifier que l'utilisateur est connecté
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /auth/start');
+            exit();
+        }
+        
+        // Vérifier que l'utilisateur a un profil et le stocker en session si nécessaire
+        if (!isset($_SESSION['profile_id'])) {
+            $profileModel = new Profile();
+            $userProfile = $profileModel->findByUserId($_SESSION['user_id']);
+            
+            if (!$userProfile) {
+                header('Location: /profile/create');
+                exit();
+            }
+            
+            $_SESSION['profile_id'] = $userProfile['id'];
+        }
+        
+        // Récupérer l'ID du match
+        $matchId = (int)($_GET['id'] ?? 0);
+        
+        if (empty($matchId)) {
+            $_SESSION['error'] = 'Match introuvable.';
+            header('Location: /match');
+            exit();
+        }
+        
+        // Récupérer le match
+        $matchModel = new MatchModel();
+        $match = $matchModel->findById($matchId);
+        
+        if (!$match) {
+            $_SESSION['error'] = 'Match introuvable.';
+            header('Location: /match');
+            exit();
+        }
+        
+        // Vérifier que l'utilisateur fait partie de ce match
+        if ($match['profile_a_id'] != $_SESSION['profile_id'] && $match['profile_b_id'] != $_SESSION['profile_id']) {
+            $_SESSION['error'] = 'Vous n\'avez pas accès à ce match.';
+            header('Location: /match');
+            exit();
+        }
+        
+        // Récupérer l'autre profil
+        $otherProfileId = ($match['profile_a_id'] == $_SESSION['profile_id']) ? $match['profile_b_id'] : $match['profile_a_id'];
+        $profileModel = new Profile();
+        $otherProfile = $profileModel->findById($otherProfileId);
+        
+        if (!$otherProfile) {
+            $_SESSION['error'] = 'Profil introuvable.';
+            header('Location: /match');
+            exit();
+        }
+        
+        // Récupérer l'utilisateur de l'autre profil
+        $userModel = new User();
+        $otherUser = $userModel->findById($otherProfile['user_id']);
+        
+        if (!$otherUser) {
+            $_SESSION['error'] = 'Utilisateur introuvable.';
+            header('Location: /match');
+            exit();
+        }
+        
+        // Préparer les données de compatibilité
+        $compatibility = [
+            'type' => $match['compatibility_type'],
+            'score' => $match['compatibility_score'],
+            'description' => $match['ia_summary'],
+            'emoji' => $this->getCompatibilityEmoji($match['compatibility_type']),
+            'label' => $this->getCompatibilityLabel($match['compatibility_type'])
+        ];
+        
+        $data = [
+            'title' => 'Détails du Match — IAstroMatch',
+            'galactic_name' => $_SESSION['galactic_name'] ?? 'Voyageur',
+            'match' => $match,
+            'other_user' => $otherUser,
+            'other_profile' => $otherProfile,
+            'compatibility' => $compatibility
+        ];
+        
+        $this->view('match/detail', $data);
     }
     
     public function accept()
@@ -259,7 +351,26 @@ class MatchController extends Controller
             exit();
         }
         
-        if (!isset($_SESSION['profile_id']) || !isset($_POST['match_id'])) {
+        // Vérifier que l'utilisateur est connecté
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /auth/start');
+            exit();
+        }
+        
+        // Vérifier que l'utilisateur a un profil et le stocker en session si nécessaire
+        if (!isset($_SESSION['profile_id'])) {
+            $profileModel = new Profile();
+            $userProfile = $profileModel->findByUserId($_SESSION['user_id']);
+            
+            if (!$userProfile) {
+                header('Location: /profile/create');
+                exit();
+            }
+            
+            $_SESSION['profile_id'] = $userProfile['id'];
+        }
+        
+        if (!isset($_POST['match_id'])) {
             header('Location: /match');
             exit();
         }
@@ -285,7 +396,26 @@ class MatchController extends Controller
             exit();
         }
         
-        if (!isset($_SESSION['profile_id']) || !isset($_POST['match_id'])) {
+        // Vérifier que l'utilisateur est connecté
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /auth/start');
+            exit();
+        }
+        
+        // Vérifier que l'utilisateur a un profil et le stocker en session si nécessaire
+        if (!isset($_SESSION['profile_id'])) {
+            $profileModel = new Profile();
+            $userProfile = $profileModel->findByUserId($_SESSION['user_id']);
+            
+            if (!$userProfile) {
+                header('Location: /profile/create');
+                exit();
+            }
+            
+            $_SESSION['profile_id'] = $userProfile['id'];
+        }
+        
+        if (!isset($_POST['match_id'])) {
             header('Location: /match');
             exit();
         }
@@ -307,35 +437,53 @@ class MatchController extends Controller
     public function revealed()
     {
         // Vérifier que l'utilisateur est connecté
-        if (!isset($_SESSION['user_id']) || !isset($_SESSION['profile_id'])) {
+        if (!isset($_SESSION['user_id'])) {
             header('Location: /auth/start');
             exit();
         }
         
-        // Récupérer les matchs révélés (acceptés mutuellement)
-        $matchModel = new MatchModel();
-        $revealedMatches = $matchModel->getAcceptedMatches($_SESSION['profile_id']);
+        // Vérifier que l'utilisateur a un profil et le stocker en session si nécessaire
+        if (!isset($_SESSION['profile_id'])) {
+            $profileModel = new Profile();
+            $userProfile = $profileModel->findByUserId($_SESSION['user_id']);
+            
+            if (!$userProfile) {
+                header('Location: /profile/create');
+                exit();
+            }
+            
+            $_SESSION['profile_id'] = $userProfile['id'];
+        }
         
-        // Enrichir les données
+        // Récupérer les matchs révélés avec JOIN (1 seule requête optimisée)
+        $matchModel = new MatchModel();
+        $revealedMatches = $matchModel->getAcceptedMatchesWithDetails($_SESSION['profile_id']);
+        
+        // Transformer les données
         $matches = [];
-        $profileModel = new Profile();
-        $userModel = new User();
         
         foreach ($revealedMatches as $match) {
-            $otherProfileId = ($match['profile_a_id'] == $_SESSION['profile_id']) 
-                ? $match['profile_b_id'] 
-                : $match['profile_a_id'];
+            // Vérifier que les données utilisateur sont présentes
+            if (empty($match['user_id']) || empty($match['galactic_name'])) {
+                continue;
+            }
             
-            $otherProfile = $profileModel->findById($otherProfileId);
-            if (!$otherProfile) continue;
-            
-            $otherUser = $userModel->findById($otherProfile['user_id']);
-            if (!$otherUser) continue;
-            
-            $matches[] = [
-                'match_id' => $match['id'],
-                'user' => $otherUser,
-                'profile' => $otherProfile,
+            $matches[] = [                'match_id' => $match['match_id'],
+                'user' => [
+                    'id' => $match['user_id'],
+                    'galactic_name' => $match['galactic_name'],
+                    'origin_type' => $match['origin_type'],
+                    'bio_signature' => $match['bio_signature']
+                ],
+                'profile' => [
+                    'id' => $match['profile_id'],
+                    'user_id' => $match['other_user_id'],
+                    'atmosphere_type' => $match['atmosphere_type'],
+                    'communication_mode' => $match['communication_mode'],
+                    'tech_level' => $match['tech_level'],
+                    'core_value' => $match['core_value'],
+                    'avatar_path' => $match['avatar_path']
+                ],
                 'compatibility' => [
                     'score' => $match['compatibility_score'],
                     'type' => $match['compatibility_type'],

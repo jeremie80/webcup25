@@ -66,16 +66,29 @@
                 <small class="form-help">ASTRÆA: Votre origine influence les harmonies que nous découvrirons ensemble.</small>
             </div>
             
-            <div class="form-actions">
+            <div class="form-actions form-actions-split">
                 <button type="submit" class="btn btn-primary">
                     <span>Créer ma Signature</span>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14M12 5l7 7-7 7"></path>
                     </svg>
                 </button>
+                
+                <a href="/auth/login" class="btn btn-secondary-outline">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                        <polyline points="10 17 15 12 10 7"></polyline>
+                        <line x1="15" y1="12" x2="3" y2="12"></line>
+                    </svg>
+                    <span>Se connecter</span>
+                </a>
             </div>
             
         </form>
+        
+        <div class="auth-helper-text">
+            <p>Créez votre signature ou connectez-vous si vous en possédez déjà une</p>
+        </div>
         
         <p class="form-note">
             Votre signature biologique sera générée automatiquement de manière unique et sécurisée.
