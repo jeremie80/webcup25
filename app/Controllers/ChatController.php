@@ -143,6 +143,13 @@ class ChatController extends Controller
         
         // Vérifier que l'utilisateur est connecté
         if (!isset($_SESSION['user_id']) || !isset($_SESSION['profile_id'])) {
+            // Requête AJAX
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                http_response_code(401);
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Non authentifié']);
+                exit();
+            }
             header('Location: /auth/start');
             exit();
         }
@@ -151,6 +158,13 @@ class ChatController extends Controller
         $content = trim($_POST['content'] ?? '');
         
         if (empty($matchId) || empty($content)) {
+            // Requête AJAX
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                http_response_code(400);
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Message vide ou match invalide']);
+                exit();
+            }
             $_SESSION['error'] = 'Message vide ou match invalide.';
             header('Location: /chat?match_id=' . $matchId);
             exit();
@@ -161,12 +175,26 @@ class ChatController extends Controller
         $match = $matchModel->findById($matchId);
         
         if (!$match) {
+            // Requête AJAX
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                http_response_code(404);
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Conversation introuvable']);
+                exit();
+            }
             $_SESSION['error'] = 'Conversation introuvable.';
             header('Location: /chat');
             exit();
         }
         
         if ($match['profile_a_id'] != $_SESSION['profile_id'] && $match['profile_b_id'] != $_SESSION['profile_id']) {
+            // Requête AJAX
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                http_response_code(403);
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Accès interdit']);
+                exit();
+            }
             $_SESSION['error'] = 'Vous n\'avez pas accès à cette conversation.';
             header('Location: /chat');
             exit();
@@ -181,8 +209,37 @@ class ChatController extends Controller
         ]);
         
         if ($messageId) {
+            // Récupérer le message créé avec les informations complètes
+            $userModel = new \App\Models\User();
+            $user = $userModel->findById($_SESSION['user_id']);
+            
+            // Requête AJAX
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'message' => [
+                        'id' => $messageId,
+                        'sender_profile_id' => $_SESSION['profile_id'],
+                        'content' => $content,
+                        'created_at' => time(),
+                        'galactic_name' => $user['galactic_name'],
+                        'is_current_user' => true
+                    ]
+                ]);
+                exit();
+            }
+            
             $_SESSION['success'] = 'Message envoyé.';
         } else {
+            // Requête AJAX
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                http_response_code(500);
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Erreur lors de l\'envoi du message']);
+                exit();
+            }
+            
             $_SESSION['error'] = 'Erreur lors de l\'envoi du message.';
         }
         
@@ -201,6 +258,7 @@ class ChatController extends Controller
         }
         
         $matchId = (int)($_GET['match_id'] ?? 0);
+        $lastMessageId = (int)($_GET['last_message_id'] ?? 0);
         
         if (empty($matchId)) {
             http_response_code(400);
@@ -229,10 +287,20 @@ class ChatController extends Controller
         
         // Récupérer les messages
         $messageModel = new Message();
-        $messages = $messageModel->findByMatchId($matchId);
+        
+        if ($lastMessageId > 0) {
+            // Récupérer uniquement les nouveaux messages après le dernier ID connu
+            $messages = $messageModel->findNewMessagesByMatchId($matchId, $lastMessageId);
+        } else {
+            // Charger tous les messages (première fois)
+            $messages = $messageModel->findByMatchId($matchId);
+        }
+        
+        // Compter tous les messages pour vérifier la révélation
+        $allMessages = $messageModel->findByMatchId($matchId);
+        $messageCount = count($allMessages);
         
         // Vérifier si la révélation doit être déclenchée
-        $messageCount = count($messages);
         if ($messageCount >= 10 && $match['status'] !== 'revealed') {
             $matchModel->updateStatus($matchId, 'revealed');
             $match['status'] = 'revealed';
@@ -257,7 +325,8 @@ class ChatController extends Controller
             'messages' => $formattedMessages,
             'current_profile_id' => $_SESSION['profile_id'],
             'is_revealed' => ($match['status'] === 'revealed'),
-            'message_count' => $messageCount
+            'message_count' => $messageCount,
+            'has_new_messages' => count($formattedMessages) > 0
         ]);
         exit();
     }

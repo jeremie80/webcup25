@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let isPlaying = false;
     let currentUtterance = null;
+    let autoNarrationStarted = false;
     
     // Charger les voix
     let voicesLoaded = false;
@@ -112,6 +113,20 @@ document.addEventListener('DOMContentLoaded', function() {
         window.speechSynthesis.speak(currentUtterance);
     }
     
+    // Démarrer automatiquement la narration après 1 seconde
+    setTimeout(function() {
+        if (!autoNarrationStarted && narrativeElements.length > 0) {
+            autoNarrationStarted = true;
+            const firstElement = narrativeElements[0];
+            const textToSpeak = firstElement.getAttribute('data-narration');
+            
+            if (textToSpeak && textToSpeak.trim() !== '') {
+                console.log('🚀 Auto-starting narration after 1 second');
+                startNarration(textToSpeak, firstElement);
+            }
+        }
+    }, 1000);
+    
     // Ajouter les listeners de clic sur tous les éléments avec data-narration
     narrativeElements.forEach(function(element) {
         const textToSpeak = element.getAttribute('data-narration');
@@ -128,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
         element.setAttribute('title', 'Cliquez pour écouter ASTRÆA');
         element.classList.add('has-narration');
         
-        // Créer l'icône audio si c'est un orbe IA
+        // Créer l'icône audio et le message si c'est un orbe IA
         if (element.classList.contains('ia-orb-container') || element.classList.contains('ia-orb-container-large')) {
             const audioIcon = document.createElement('div');
             audioIcon.className = 'audio-indicator';
@@ -140,7 +155,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 </svg>
             `;
             element.appendChild(audioIcon);
-            console.log('✅ Audio indicator added to orb');
+            
+            // Ajouter un message d'invitation
+            const narratorHint = document.createElement('div');
+            narratorHint.className = 'narrator-hint';
+            narratorHint.innerHTML = `
+                <span class="narrator-hint-text">🎙️ Cliquez pour écouter ASTRÆA</span>
+            `;
+            element.appendChild(narratorHint);
+            
+            console.log('✅ Audio indicator and hint added to orb');
         }
         
         // Ajouter le listener

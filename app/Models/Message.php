@@ -49,6 +49,26 @@ class Message
         $stmt->execute(['match_id' => $matchId]);
         return $stmt->fetchAll();
     }
+    
+    /**
+     * Récupérer uniquement les nouveaux messages d'un match après un certain ID
+     */
+    public function findNewMessagesByMatchId($matchId, $lastMessageId)
+    {
+        $stmt = $this->db->prepare(
+            "SELECT m.*, p.user_id, u.galactic_name
+             FROM messages m
+             INNER JOIN profiles p ON p.id = m.sender_profile_id
+             INNER JOIN users u ON u.id = p.user_id
+             WHERE m.match_id = :match_id AND m.id > :last_message_id
+             ORDER BY m.created_at ASC"
+        );
+        $stmt->execute([
+            'match_id' => $matchId,
+            'last_message_id' => $lastMessageId
+        ]);
+        return $stmt->fetchAll();
+    }
 
     /**
      * Récupérer les conversations d'un profil (matches avec dernier message)

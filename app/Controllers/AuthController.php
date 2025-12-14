@@ -57,6 +57,16 @@ class AuthController extends Controller
             return;
         }
         
+        // Vérifier si le nom galactique existe déjà
+        if ($userModel->existsByGalacticName($galacticName)) {
+            $this->view('auth/start', [
+                'error' => 'Ce nom galactique est déjà utilisé par une autre entité. ASTRÆA détecte une signature similaire dans l\'écosystème. Veuillez choisir un nom unique qui reflète votre essence singulière.',
+                'galactic_name' => '',
+                'origin_type' => $originType
+            ]);
+            return;
+        }
+        
         // Générer une bio_signature unique (SHA256 = 64 caractères)
         $bioSignature = hash('sha256', $galacticName . $originType . time() . bin2hex(random_bytes(16)));
         

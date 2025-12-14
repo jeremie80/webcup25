@@ -1,9 +1,10 @@
+<?php $hideHeader = true; ?>
 <section class="portal-entrance-split">
     <div class="portal-glow"></div>
     
     <!-- Partie gauche : IA (toujours visible) -->
     <aside class="portal-ia-side">
-        <div class="ia-orb-container" id="ia-orb-narrator" data-narration="Ensemble, nous allons créer votre signature galactique, le reflet unique de votre essence. Chaque nom résonne avec une énergie particulière. Prenez le temps de choisir celui qui vous représente vraiment.">
+        <div class="ia-orb-container" id="ia-orb-narrator" data-narration="Ensemble, nous allons créer votre signature galactique, le reflet unique de votre essence. Attention : votre nom galactique doit être absolument unique dans tout l'écosystème. Si un autre voyageur porte déjà ce nom, il ne pourra pas être accepté. Chaque nom résonne avec une énergie particulière. Prenez le temps de choisir celui qui vous représente vraiment.">
             <div class="ia-orb-ring ring-1"></div>
             <div class="ia-orb-ring ring-2"></div>
             <div class="ia-orb-ring ring-3"></div>
@@ -47,7 +48,7 @@
                     required
                     maxlength="200"
                 >
-                <small class="form-help">ASTRÆA: Votre nom est la première note de votre symphonie.</small>
+                <small class="form-help">ASTRÆA: Votre nom doit être unique dans l'écosystème. Il est la première note de votre symphonie.</small>
             </div>
             
             <div class="form-group">

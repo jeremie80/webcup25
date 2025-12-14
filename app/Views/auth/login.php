@@ -1,3 +1,4 @@
+<?php $hideHeader = true; ?>
 <section class="portal-entrance-split">
     <div class="portal-glow"></div>
     

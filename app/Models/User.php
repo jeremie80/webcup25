@@ -64,6 +64,17 @@ class User
         $stmt->execute(['signature' => $signature]);
         return $stmt->fetch();
     }
+    
+    /**
+     * Vérifier si un nom galactique existe déjà
+     */
+    public function existsByGalacticName($galacticName)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM users WHERE galactic_name = :galactic_name");
+        $stmt->execute(['galactic_name' => $galacticName]);
+        $result = $stmt->fetch();
+        return $result['count'] > 0;
+    }
 
     /**
      * Créer un nouvel utilisateur

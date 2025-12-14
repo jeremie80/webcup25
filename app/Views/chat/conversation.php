@@ -317,6 +317,47 @@ function nl2br(text) {
     return text.replace(/\n/g, '<br>');
 }
 
+// Mettre à jour le niveau de confiance interespèce
+function updateTrustLevel(messageCount) {
+    const trustGaugeFill = document.querySelector('.trust-gauge-fill');
+    const trustGaugeStatus = document.querySelector('.trust-gauge-status');
+    
+    if (!trustGaugeFill || !trustGaugeStatus) {
+        return;
+    }
+    
+    // Calculer le pourcentage (100% à 10 messages)
+    let percentage = Math.min(Math.round((messageCount / 10) * 100), 100);
+    let label = '';
+    let stage = '';
+    
+    if (messageCount === 0) {
+        percentage = 5;
+        label = 'Contact Initial';
+        stage = 'initial';
+    } else if (messageCount <= 2) {
+        label = 'Premiers Échanges';
+        stage = 'early';
+    } else if (messageCount <= 5) {
+        label = 'Construction Progressive';
+        stage = 'building';
+    } else if (messageCount <= 8) {
+        label = 'Approfondissement';
+        stage = 'deepening';
+    } else if (messageCount < 10) {
+        label = 'Harmonisation Avancée';
+        stage = 'advanced';
+    } else {
+        label = 'Harmonie Complète';
+        stage = 'complete';
+    }
+    
+    // Mettre à jour l'affichage
+    trustGaugeFill.style.width = percentage + '%';
+    trustGaugeFill.className = `trust-gauge-fill trust-stage-${stage}`;
+    trustGaugeStatus.textContent = `${label} — ${percentage}%`;
+}
+
 // Auto-scroll vers le bas
 function scrollToBottom(smooth = false) {
     const messagesContainer = document.getElementById('messages-container');
@@ -551,9 +592,14 @@ function triggerRevelation(otherUserName, avatarPath) {
     }
 }
 
-// Rafraîchir les messages via AJAX
+// Rafraîchir les messages via AJAX (uniquement les nouveaux)
 function refreshMessages() {
-    fetch(`/chat/messages?match_id=${MATCH_ID}`)
+    // Récupérer l'ID du dernier message affiché
+    const lastMessage = document.querySelector('#messages-container .message:last-of-type');
+    const lastMessageId = lastMessage ? lastMessage.dataset.messageId : 0;
+    
+    // Appel AJAX avec le dernier ID de message
+    fetch(`/chat/messages?match_id=${MATCH_ID}&last_message_id=${lastMessageId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Erreur réseau');
@@ -561,42 +607,43 @@ function refreshMessages() {
             return response.json();
         })
         .then(data => {
-            if (data.success && data.messages) {
+            if (data.success && data.has_new_messages && data.messages.length > 0) {
                 const messagesContainer = document.getElementById('messages-container');
-                const currentMessages = messagesContainer.querySelectorAll('.message');
                 
-                // Si le nombre de messages a changé, mettre à jour
-                if (data.messages.length !== lastMessageCount) {
-                    // Supprimer le message "Aucun message" s'il existe
-                    const noMessages = messagesContainer.querySelector('.no-messages');
-                    if (noMessages) {
-                        noMessages.remove();
-                    }
+                // Supprimer le message "Aucun message" s'il existe
+                const noMessages = messagesContainer.querySelector('.no-messages');
+                if (noMessages) {
+                    noMessages.remove();
+                }
+                
+                // Compter le nombre total de messages actuels
+                const currentMessageCount = messagesContainer.querySelectorAll('.message').length;
+                
+                // Ajouter uniquement les nouveaux messages
+                data.messages.forEach((msg) => {
+                    const newMessageIndex = currentMessageCount + 1;
+                    const messageElement = createMessageElement(msg, newMessageIndex);
+                    messagesContainer.appendChild(messageElement);
                     
-                    // Récupérer les IDs des messages existants
-                    const existingIds = Array.from(currentMessages).map(el => parseInt(el.dataset.messageId));
-                    
-                    // Ajouter les nouveaux messages
-                    data.messages.forEach((msg, index) => {
-                        if (!existingIds.includes(msg.id)) {
-                            const messageIndex = index + 1;
-                            const messageElement = createMessageElement(msg, messageIndex);
-                            messagesContainer.appendChild(messageElement);
-                            
-                            // Générer et ajouter les interventions IA
-                            const interventions = generateIAInterventions(msg, messageIndex);
-                            interventions.forEach(text => {
-                                const interventionElement = createIAIntervention(text);
-                                messagesContainer.appendChild(interventionElement);
-                            });
-                        }
+                    // Générer et ajouter les interventions IA
+                    const interventions = generateIAInterventions(msg, newMessageIndex);
+                    interventions.forEach(text => {
+                        const interventionElement = createIAIntervention(text);
+                        messagesContainer.appendChild(interventionElement);
                     });
-                    
-                    // Vérifier si la révélation doit être déclenchée
+                });
+                
+                // Mettre à jour le compteur de messages
+                if (data.message_count) {
+                    updateTrustLevel(data.message_count);
+                }
+                
+                // Vérifier si la révélation doit être déclenchée
+                if (data.is_revealed) {
                     const entityVisualContainer = document.getElementById('entity-visual-container');
-                    const isRevealed = entityVisualContainer && entityVisualContainer.getAttribute('data-revealed') === 'true';
+                    const isCurrentlyRevealed = entityVisualContainer && entityVisualContainer.getAttribute('data-revealed') === 'true';
                     
-                    if (data.messages.length >= 10 && !isRevealed && !document.getElementById('revelation-message')) {
+                    if (!isCurrentlyRevealed && !document.getElementById('revelation-message')) {
                         // Déclencher la révélation
                         const otherUserName = '<?= htmlspecialchars($other_user['galactic_name']) ?>';
                         const avatarPath = '<?= !empty($other_profile['avatar_path']) ? '/' . htmlspecialchars($other_profile['avatar_path']) : '' ?>';
@@ -605,13 +652,11 @@ function refreshMessages() {
                             triggerRevelation(otherUserName, avatarPath);
                         }, 1000);
                     }
-                    
-                    // Scroll automatique si l'utilisateur était en bas
-                    if (isScrolledToBottom) {
-                        scrollToBottom(true);
-                    }
-                    
-                    lastMessageCount = data.messages.length;
+                }
+                
+                // Scroll automatique si l'utilisateur était en bas
+                if (isScrolledToBottom) {
+                    scrollToBottom(true);
                 }
             }
         })
@@ -655,13 +700,73 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Soumettre le formulaire et rafraîchir immédiatement
+    // Soumettre le formulaire en AJAX
     if (messageForm) {
-        messageForm.addEventListener('submit', function() {
-            // Rafraîchir les messages 1 seconde après l'envoi
-            setTimeout(() => {
-                refreshMessages();
-            }, 1000);
+        messageForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Empêcher le rechargement de la page
+            
+            const formData = new FormData(messageForm);
+            const messageContent = formData.get('content').trim();
+            
+            if (!messageContent) {
+                return; // Ne rien faire si le message est vide
+            }
+            
+            // Désactiver le bouton d'envoi pendant l'envoi
+            const submitButton = messageForm.querySelector('button[type="submit"]');
+            const originalButtonContent = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span>Envoi...</span>';
+            
+            // Envoyer le message en AJAX
+            fetch('/chat/send', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.message) {
+                    // Ajouter le message immédiatement au DOM
+                    const messagesContainer = document.getElementById('messages-container');
+                    const currentMessageCount = messagesContainer.querySelectorAll('.message').length;
+                    const newMessageIndex = currentMessageCount + 1;
+                    
+                    const messageElement = createMessageElement(data.message, newMessageIndex);
+                    messagesContainer.appendChild(messageElement);
+                    
+                    // Générer et ajouter les interventions IA si nécessaire
+                    const interventions = generateIAInterventions(data.message, newMessageIndex);
+                    interventions.forEach(text => {
+                        const interventionElement = createIAIntervention(text);
+                        messagesContainer.appendChild(interventionElement);
+                    });
+                    
+                    // Réinitialiser le formulaire
+                    messageForm.reset();
+                    messageInput.style.height = 'auto';
+                    
+                    // Scroll vers le bas
+                    scrollToBottom(true);
+                    
+                    // Mettre à jour le compteur de messages
+                    updateTrustLevel(newMessageIndex);
+                } else {
+                    console.error('Erreur lors de l\'envoi:', data.error);
+                    alert('Erreur lors de l\'envoi du message: ' + (data.error || 'Erreur inconnue'));
+                }
+            })
+            .catch(error => {
+                console.error('Erreur réseau:', error);
+                alert('Erreur réseau lors de l\'envoi du message');
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonContent;
+            });
         });
     }
     

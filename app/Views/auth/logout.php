@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     }
     
-    // Démarrer automatiquement la narration après 1 seconde (silencieuse, pas de bouton)
+    // Démarrer automatiquement la narration après 1 seconde
     setTimeout(() => {
         startNarration();
     }, 1000);
