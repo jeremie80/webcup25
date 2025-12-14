@@ -29,6 +29,7 @@
     <script src="/assets/js/app.js"></script>
     <script src="/assets/js/narration.js"></script>
     <script src="/assets/js/form.js"></script>
+    <script src="/assets/js/analysis.js"></script>
 </body>
 </html>
 

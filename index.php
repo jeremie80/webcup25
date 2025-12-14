@@ -25,9 +25,13 @@ $router->post('/auth/login', 'AuthController@login');
 $router->post('/auth/register', 'AuthController@register');
 $router->get('/profile/create', 'ProfileController@create');
 $router->post('/profile/store', 'ProfileController@store');
+$router->get('/profile/analysis', 'ProfileController@analysis');
+$router->get('/profile/validate', 'ProfileController@validate');
 $router->get('/match', 'MatchController@index');
 $router->get('/match/detail', 'MatchController@detail');
-$router->get('/match/result', 'MatchController@result');
+$router->get('/match/revealed', 'MatchController@revealed');
+$router->post('/match/accept', 'MatchController@accept');
+$router->post('/match/reject', 'MatchController@reject');
 $router->get('/chat', 'ChatController@index');
 $router->post('/chat/send', 'ChatController@send');
 

@@ -99,8 +99,8 @@ class ProfileController extends Controller
         if ($profileId) {
             $_SESSION['profile_id'] = $profileId;
             
-            // Rediriger vers la page de match
-            header('Location: /match');
+            // Rediriger vers l'analyse IA
+            header('Location: /profile/analysis');
             exit();
         } else {
             $this->view('profile/create', [
@@ -112,6 +112,44 @@ class ProfileController extends Controller
                 'galactic_name' => $_SESSION['galactic_name'] ?? ''
             ]);
         }
+    }
+    
+    public function analysis()
+    {
+        // Vérifier que l'utilisateur est connecté
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /auth/start');
+            exit();
+        }
+        
+        // Vérifier que l'utilisateur a un profil
+        if (!isset($_SESSION['profile_id'])) {
+            header('Location: /profile/create');
+            exit();
+        }
+        
+        $data = [
+            'title' => 'Analyse en cours — IAstroMatch',
+            'galactic_name' => $_SESSION['galactic_name'] ?? 'Voyageur'
+        ];
+        
+        $this->view('profile/analysis', $data);
+    }
+    
+    public function validate()
+    {
+        // Vérifier que l'utilisateur est connecté
+        if (!isset($_SESSION['user_id']) || !isset($_SESSION['profile_id'])) {
+            header('Location: /auth/start');
+            exit();
+        }
+        
+        // Marquer le profil comme validé (simulation)
+        $_SESSION['profile_validated'] = true;
+        
+        // Rediriger vers le matching
+        header('Location: /match');
+        exit();
     }
 }
 
