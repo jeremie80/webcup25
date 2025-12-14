@@ -4581,6 +4581,7 @@ body {
     .compat-center {
         width: 100px;
         height: 100px;
+        transform: translate(-50%, -70%);
     }
     
     .compat-emoji-large {
