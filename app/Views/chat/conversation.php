@@ -1,19 +1,78 @@
-<section class="conversation-container">
+<section class="portal-entrance-split conversation-container">
     <div class="portal-glow"></div>
     
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="flash-message flash-success">
-            <?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
+    <!-- Partie droite : IA (toujours visible) -->
+    <aside class="portal-ia-side">
+        <div class="ia-orb-container" id="ia-orb-narrator" data-narration="Vous êtes en conversation avec <?= htmlspecialchars($other_user['galactic_name']) ?>. Échangez librement et respectueusement. ASTRÆA veille à l'harmonie de vos échanges.">
+            <div class="ia-orb-ring ring-1"></div>
+            <div class="ia-orb-ring ring-2"></div>
+            <div class="ia-orb-ring ring-3"></div>
+            <div class="ia-orb-core">
+                <div class="particle particle-1"></div>
+                <div class="particle particle-2"></div>
+                <div class="particle particle-3"></div>
+            </div>
+            <div class="audio-indicator">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                </svg>
+            </div>
         </div>
-    <?php endif; ?>
-    
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="flash-message flash-error">
-            <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+        
+        <div class="ia-name">
+            <h2>ASTRÆA</h2>
+            <p>Médiatrice Cosmique</p>
         </div>
-    <?php endif; ?>
+        
+        <div class="ia-message">
+            <p>Je veille à l'harmonie de vos échanges avec <strong><?= htmlspecialchars($other_user['galactic_name']) ?></strong>.</p>
+        </div>
+        
+        <!-- Niveau de confiance interespèce -->
+        <div class="trust-section-sidebar">
+            <div class="trust-gauge">
+                <div class="trust-gauge-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <span>Niveau de confiance</span>
+                </div>
+                <div class="trust-gauge-bar">
+                    <div class="trust-gauge-fill trust-stage-<?= $trust_level['stage'] ?>" style="width: <?= $trust_level['percentage'] ?>%;"></div>
+                </div>
+                <span class="trust-gauge-status"><?= htmlspecialchars($trust_level['label']) ?> — <?= $trust_level['percentage'] ?>%</span>
+            </div>
+            
+            <?php if ($is_revealed && $message_count >= 10): ?>
+                <!-- Bouton d'évaluation du lien (après révélation) -->
+                <a href="/match/result?match_id=<?= $match_id ?>" class="btn-evaluate-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 11l3 3L22 4"></path>
+                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                    </svg>
+                    <span>Évaluer ce lien</span>
+                </a>
+            <?php endif; ?>
+        </div>
+    </aside>
     
-    <header class="conversation-header">
+    <!-- Partie gauche : Contenu (conversation) -->
+    <article class="portal-content-side">
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="flash-message flash-success">
+                <?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="flash-message flash-error">
+                <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
+        
+        <header class="conversation-header">
         <a href="/chat" class="back-button">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 12H5M12 19l-7-7 7-7"></path>
@@ -30,7 +89,7 @@
                             <img src="/<?= htmlspecialchars($other_profile['avatar_path']) ?>" alt="Avatar révélé" class="avatar-image-revealed">
                         <?php else: ?>
                             <div class="avatar-placeholder-revealed">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                     <circle cx="12" cy="7" r="4"></circle>
                                 </svg>
@@ -92,41 +151,8 @@
     
     <!-- Niveau de confiance interespèce -->
     <section class="trust-section">
-        <div class="trust-gauge">
-                    <div class="trust-gauge-label">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                        <span>Niveau de confiance interespèce</span>
-                    </div>
-                    <div class="trust-gauge-bar">
-                        <div class="trust-gauge-fill trust-stage-<?= $trust_level['stage'] ?>" style="width: <?= $trust_level['percentage'] ?>%;"></div>
-                    </div>
-                    <span class="trust-gauge-status"><?= htmlspecialchars($trust_level['label']) ?> — <?= $trust_level['percentage'] ?>%</span>
-                </div>
-                
-                <?php if ($is_revealed && $message_count >= 10): ?>
-                    <!-- Bouton d'évaluation du lien (après révélation) -->
-                    <a href="/match/result?match_id=<?= $match_id ?>" class="btn-evaluate-link">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 11l3 3L22 4"></path>
-                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
-                        </svg>
-                        <span>Évaluer ce lien</span>
-                    </a>
-                <?php endif; ?>
-            </div>
-        </div>
-        
-        <div class="ia-orb-container-small" id="ia-orb-narrator" data-narration="Vous êtes en conversation avec <?= htmlspecialchars($other_user['galactic_name']) ?>. Échangez librement et respectueusement.">
-            <div class="ia-orb-ring ring-1"></div>
-            <div class="ia-orb-ring ring-2"></div>
-            <div class="ia-orb-core">
-                <div class="particle particle-1"></div>
-                <div class="particle particle-2"></div>
-                <div class="particle particle-3"></div>
-            </div>
-        </div>
+              
+   
     </header>
     
     <article class="messages-container" id="messages-container">
@@ -282,6 +308,7 @@
             </div>
         </form>
     </footer>
+    </article>
 </section>
 
 <script>
@@ -555,7 +582,7 @@ function triggerRevelation(otherUserName, avatarPath) {
         } else {
             revealedAvatar.innerHTML = `
                 <div class="avatar-placeholder-revealed">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
