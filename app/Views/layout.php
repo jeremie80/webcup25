@@ -24,12 +24,11 @@
     <main class="container">
         <?= $content ?>
     </main>
-
-    <!-- IA ASTRÆA - Toujours présente -->
-    <?php include __DIR__ . '/partials/ia.php'; ?>
     
     <!-- JavaScript -->
     <script src="/assets/js/app.js"></script>
+    <script src="/assets/js/narration.js"></script>
+    <script src="/assets/js/form.js"></script>
 </body>
 </html>
 

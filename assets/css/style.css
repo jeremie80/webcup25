@@ -57,7 +57,7 @@
 
 body {
     font-family: var(--font-main);
-    line-height: 1.6;
+    line-height: 1.1;
     color: #2d3436;
     background: linear-gradient(135deg, var(--solar-light) 0%, var(--earth-sand) 100%);
     min-height: 100vh;
@@ -66,7 +66,7 @@ body {
 
 /* Layout moderne avec CSS Grid */
 .container {
-    max-width: 1200px;
+    max-width: 100vw;
     margin: 0 auto;
     padding: var(--spacing-lg);
     display: grid;
@@ -148,17 +148,15 @@ body {
 }
 
 /* ============================================
-   ÉCRAN 0 — Portail d'Entrée (Layout Split)
+   ÉCRAN 0 — Portail d'Entrée (Split IA + Contenu)
    ============================================ */
 
-.portal-entrance {
+.portal-entrance-split {
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: var(--spacing-xxl);
-    padding: var(--spacing-xxl);
+    grid-template-columns: 45% 55%;
     position: relative;
-    align-items: center;
+    overflow: hidden;
 }
 
 /* Halo lumineux de fond */
@@ -176,16 +174,48 @@ body {
     z-index: -1;
 }
 
-/* Partie droite : Sidebar fixe */
-.portal-sidebar {
+/* Partie gauche : IA */
+.portal-ia-side {
+    background: linear-gradient(135deg, var(--primary-soft) 0%, var(--sky-blue) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xl);
+    position: relative;
+}
+
+.ia-name {
+    text-align: center;
+    color: white;
+}
+
+.ia-name h2 {
+    font-family: var(--font-title);
+    font-size: 2.5rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.ia-name p {
+    font-size: 1rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Partie droite : Contenu */
+.portal-content-side {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-xxl);
-    position: sticky;
-    top: var(--spacing-xxl);
-    align-self: start;
+    padding: var(--spacing-xxl);
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 /* Header du portail */
@@ -193,9 +223,25 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-xl);
+    gap: var(--spacing-md);
     animation: fadeInUp var(--transition-page) ease;
     text-align: center;
+}
+
+/* Narrative */
+.portal-narrative {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    animation: fadeInUp var(--transition-page) ease 300ms backwards;
+}
+
+.narrative-text {
+    font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+    color: #2d3436;
+    line-height: 1.4;
+    text-align: center;
+    margin: 0;
 }
 
 /* Orbe IA lumineuse */
@@ -217,8 +263,8 @@ body {
 }
 
 .ring-1 {
-    width: 180px;
-    height: 180px;
+    width: 250px;
+    height: 250px;
     animation-delay: 0s;
 }
 
@@ -314,45 +360,6 @@ body {
     opacity: 0.7;
 }
 
-/* Partie gauche : Cards narratives en grille */
-.portal-narrative {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-lg);
-    animation: fadeInUp var(--transition-page) ease 300ms backwards;
-}
-
-/* Cards pour chaque paragraphe - Solarpunk translucides */
-.narrative-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: var(--spacing-xl);
-    border-radius: var(--radius-md);
-    border: 1px solid rgba(95, 179, 162, 0.15);
-    transition: all var(--transition-normal);
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    align-items: center;
-    text-align: left;
-}
-
-.narrative-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--primary-soft);
-    background: rgba(255, 255, 255, 0.85);
-}
-
-.narrative-card p {
-    margin: 0;
-}
-
-/* Card citation prend toute la largeur */
-.ia-voice.narrative-card {
-    grid-column: 1 / -1;
-    text-align: center;
-}
 
 .narrative-intro {
     font-size: clamp(1.2rem, 3vw, 1.5rem);
@@ -404,6 +411,75 @@ body {
     font-style: normal;
     font-weight: 600;
     align-self: flex-end;
+}
+
+/* Message IA dans la sidebar */
+.ia-message {
+    max-width: 280px;
+    text-align: center;
+    padding: var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.ia-message p {
+    color: white;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    font-style: italic;
+    margin: 0;
+}
+
+/* ============================================
+   Formulaire de Profil
+   ============================================ */
+
+.form-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xs);
+    animation: fadeInUp var(--transition-page) ease;
+}
+
+.form-title {
+    font-family: var(--font-title);
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 600;
+    color: var(--primary-green);
+    margin-bottom: var(--spacing-xs);
+}
+
+.form-subtitle {
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
+    color: #636e72;
+    font-weight: 400;
+}
+
+.profile-form {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    animation: fadeInUp var(--transition-page) ease 200ms backwards;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing-xs);
+}
+
+.form-note {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #636e72;
+    font-style: italic;
+    max-width: 400px;
+    margin: 0 auto;
+    opacity: 0.8;
+    animation: fadeInUp var(--transition-page) ease 400ms backwards;
 }
 
 /* Footer du portail */
@@ -475,52 +551,236 @@ body {
 
 /* Responsive */
 @media (max-width: 1200px) {
-    .portal-entrance {
-        grid-template-columns: 1fr;
-        padding: var(--spacing-lg);
-    }
-    
-    .portal-sidebar {
-        position: relative;
-        order: -1;
-    }
-    
-    .portal-narrative {
-        grid-template-columns: 1fr;
+    .portal-entrance-split {
+        grid-template-columns: 40% 60%;
     }
     
     .ia-orb-container {
-        width: 150px;
-        height: 150px;
+        width: 180px;
+        height: 180px;
     }
     
-    .ring-1 { width: 140px; height: 140px; }
-    .ring-2 { width: 100px; height: 100px; }
-    .ring-3 { width: 70px; height: 70px; }
+    .ring-1 { width: 220px; height: 220px; }
+    .ring-2 { width: 165px; height: 165px; }
+    .ring-3 { width: 120px; height: 120px; }
     
     .ia-orb-core {
-        width: 60px;
-        height: 60px;
+        width: 70px;
+        height: 70px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .portal-entrance-split {
+        grid-template-columns: 1fr;
+        grid-template-rows: 45vh 55vh;
+    }
+    
+    .portal-ia-side {
+        padding: var(--spacing-xl);
+    }
+    
+    .portal-content-side {
+        padding: var(--spacing-lg);
+        gap: var(--spacing-lg);
+    }
+    
+    .ia-orb-container {
+        width: 160px;
+        height: 160px;
+    }
+    
+    .ring-1 { width: 200px; height: 200px; }
+    .ring-2 { width: 150px; height: 150px; }
+    .ring-3 { width: 110px; height: 110px; }
+    
+    .ia-orb-core {
+        width: 65px;
+        height: 65px;
+    }
+    
+    .ia-name h2 {
+        font-size: 2rem;
+    }
+    
+    .portal-title {
+        font-size: clamp(2rem, 5vw, 2.5rem);
     }
 }
 
 @media (max-width: 768px) {
-    .portal-entrance {
-        gap: var(--spacing-lg);
+    .portal-entrance-split {
+        grid-template-rows: 40vh 60vh;
+    }
+    
+    .portal-ia-side {
+        padding: var(--spacing-lg);
+        gap: var(--spacing-md);
+    }
+    
+    .portal-content-side {
+        padding: var(--spacing-md);
+    }
+    
+    .ia-orb-container {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .ring-1 { width: 180px; height: 180px; }
+    .ring-2 { width: 135px; height: 135px; }
+    .ring-3 { width: 95px; height: 95px; }
+    
+    .ia-orb-core {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .particle {
+        width: 4px;
+        height: 4px;
+    }
+    
+    .ia-name h2 {
+        font-size: 1.6rem;
+    }
+    
+    .ia-name p {
+        font-size: 0.85rem;
     }
     
     .portal-glow {
-        width: 400px;
-        height: 400px;
+        width: 350px;
+        height: 350px;
     }
     
-    .ia-voice {
-        padding: var(--spacing-lg);
+    .portal-title {
+        font-size: clamp(1.8rem, 4vw, 2.2rem);
+    }
+    
+    .portal-subtitle {
+        font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+    }
+    
+    .narrative-text {
+        font-size: clamp(1rem, 2vw, 1.15rem);
     }
     
     .portal-cta {
-        padding: 16px 40px;
-        font-size: 1rem;
+        padding: 14px 35px;
+        font-size: 0.95rem;
+    }
+    
+    .portal-note {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .portal-entrance-split {
+        grid-template-rows: 35vh 65vh;
+    }
+    
+    .portal-ia-side {
+        padding: var(--spacing-md);
+    }
+    
+    .portal-content-side {
+        padding: var(--spacing-sm) var(--spacing-md);
+        gap: var(--spacing-md);
+    }
+    
+    .ia-orb-container {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .ring-1 { width: 150px; height: 150px; }
+    .ring-2 { width: 115px; height: 115px; }
+    .ring-3 { width: 80px; height: 80px; }
+    
+    .ia-orb-core {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .particle {
+        width: 3px;
+        height: 3px;
+    }
+    
+    .ia-name h2 {
+        font-size: 1.3rem;
+    }
+    
+    .ia-name p {
+        font-size: 0.75rem;
+    }
+    
+    .portal-title {
+        font-size: 1.6rem;
+    }
+    
+    .portal-subtitle {
+        font-size: 0.7rem;
+    }
+    
+    .narrative-text {
+        font-size: 0.95rem;
+    }
+    
+    .portal-cta {
+        padding: 12px 30px;
+        font-size: 0.9rem;
+        min-height: 44px;
+    }
+    
+    .portal-note {
+        font-size: 0.75rem;
+    }
+    
+    .ia-message {
+        padding: var(--spacing-md);
+        max-width: 220px;
+    }
+    
+    .ia-message p {
+        font-size: 0.85rem;
+    }
+    
+    .form-title {
+        font-size: clamp(1.6rem, 4vw, 2rem);
+    }
+    
+    .form-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .profile-form {
+        gap: var(--spacing-lg);
+    }
+    
+    .form-group {
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+    }
+    
+    .form-group input,
+    .form-group select {
+        padding: 14px 16px;
+        font-size: 0.95rem;
+    }
+    
+    .form-help {
+        font-size: 0.8rem;
+    }
+    
+    .btn {
+        padding: 14px 35px;
+        font-size: 0.95rem;
     }
 }
 
@@ -621,7 +881,6 @@ body {
    ============================================ */
 
 .form-group {
-    margin-bottom: var(--spacing-lg);
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
@@ -640,8 +899,9 @@ body {
     padding: 16px 20px;
     border: 2px solid rgba(95, 179, 162, 0.2);
     border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: #2d3436;
     font-size: 1rem;
     font-family: var(--font-main);
@@ -653,19 +913,30 @@ body {
 .form-group select:focus {
     outline: none;
     border-color: var(--primary-green);
-    box-shadow: var(--shadow-md);
-    background: rgba(255, 255, 255, 0.95);
+    box-shadow: var(--shadow-lg);
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .form-group input::placeholder {
     color: rgba(45, 52, 54, 0.4);
 }
 
+.form-group select {
+    cursor: pointer;
+}
+
+.form-group select option {
+    background: white;
+    color: #2d3436;
+    padding: 10px;
+}
+
 .form-help {
     font-size: 0.85rem;
     color: var(--primary-green);
     font-style: italic;
-    opacity: 0.8;
+    opacity: 0.85;
+    line-height: 1.5;
 }
 
 /* ============================================
@@ -839,6 +1110,73 @@ body {
     background: var(--dangerous);
     box-shadow: 0 0 20px rgba(242, 132, 130, 0.5);
     animation: pulse 1.5s ease infinite;
+}
+
+/* ============================================
+   Indicateur de narration
+   ============================================ */
+
+.has-narration {
+    position: relative;
+}
+
+.audio-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    background: rgba(95, 179, 162, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.audio-indicator svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--primary-green);
+    filter: drop-shadow(0 2px 4px rgba(95, 179, 162, 0.3));
+}
+
+/* Afficher l'indicateur au survol de l'orbe */
+.ia-orb-container:hover .audio-indicator {
+    opacity: 1;
+    animation: audioHint 2s ease-in-out infinite;
+}
+
+/* Animation subtile de l'indicateur */
+@keyframes audioHint {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
+}
+
+/* Style pour les éléments narratifs non-orbes */
+.has-narration:not(.ia-orb-container)::after {
+    content: '🎙️';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.has-narration:not(.ia-orb-container):hover::after {
+    opacity: 0.6;
 }
 
 /* ============================================

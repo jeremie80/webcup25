@@ -9,9 +9,20 @@ class User
 {
     private $db;
     
+    // Types d'origine valides selon le schéma de la table
+    const ORIGIN_TYPES = [
+        'earth_renewed',
+        'oceanic_world',
+        'forest_megacity',
+        'orbital_habitat',
+        'desert_solar',
+        'synthetic_collective',
+        'luminous_dimension',
+        'nomadic_fleet'
+    ];
+
     public function __construct()
     {
-        // Récupérer la connexion PDO
         $this->db = Database::getInstance();
     }
 
@@ -20,18 +31,8 @@ class User
      */
     public function getAll()
     {
-        $stmt = $this->db->query("SELECT * FROM users");
+        $stmt = $this->db->query("SELECT * FROM users ORDER BY created_at DESC");
         return $stmt->fetchAll();
-    }
-
-    /**
-     * Récupérer un utilisateur par email
-     */
-    public function findByEmail($email)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");
-        $stmt->execute(['email' => $email]);
-        return $stmt->fetch();
     }
 
     /**
@@ -43,21 +44,63 @@ class User
         $stmt->execute(['id' => $id]);
         return $stmt->fetch();
     }
+    
+    /**
+     * Récupérer un utilisateur par nom galactique
+     */
+    public function findByGalacticName($name)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE galactic_name = :name");
+        $stmt->execute(['name' => $name]);
+        return $stmt->fetch();
+    }
+    
+    /**
+     * Récupérer un utilisateur par bio_signature
+     */
+    public function findByBioSignature($signature)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE bio_signature = :signature");
+        $stmt->execute(['signature' => $signature]);
+        return $stmt->fetch();
+    }
 
     /**
      * Créer un nouvel utilisateur
+     * @param array $data ['galactic_name', 'origin_type', 'bio_signature']
+     * @return int|false ID du nouvel utilisateur ou false en cas d'erreur
      */
     public function create($data)
     {
-        $stmt = $this->db->prepare(
-            "INSERT INTO users (email, password, created_at) 
-             VALUES (:email, :password, NOW())"
-        );
+        // Validation
+        if (empty($data['galactic_name']) || strlen($data['galactic_name']) > 200) {
+            return false;
+        }
         
-        return $stmt->execute([
-            'email' => $data['email'],
-            'password' => password_hash($data['password'], PASSWORD_DEFAULT)
+        if (!in_array($data['origin_type'], self::ORIGIN_TYPES)) {
+            return false;
+        }
+        
+        if (empty($data['bio_signature']) || strlen($data['bio_signature']) !== 64) {
+            return false;
+        }
+        
+        $stmt = $this->db->prepare(
+            "INSERT INTO users (galactic_name, origin_type, bio_signature)
+             VALUES (:galactic_name, :origin_type, :bio_signature)"
+        );
+
+        $result = $stmt->execute([
+            'galactic_name' => $data['galactic_name'],
+            'origin_type' => $data['origin_type'],
+            'bio_signature' => $data['bio_signature']
         ]);
+        
+        if ($result) {
+            return $this->db->lastInsertId();
+        }
+        
+        return false;
     }
 
     /**
@@ -65,16 +108,27 @@ class User
      */
     public function update($id, $data)
     {
-        $stmt = $this->db->prepare(
-            "UPDATE users 
-             SET email = :email, updated_at = NOW() 
-             WHERE id = :id"
-        );
+        $fields = [];
+        $params = ['id' => $id];
         
-        return $stmt->execute([
-            'id' => $id,
-            'email' => $data['email']
-        ]);
+        if (isset($data['galactic_name']) && strlen($data['galactic_name']) <= 200) {
+            $fields[] = "galactic_name = :galactic_name";
+            $params['galactic_name'] = $data['galactic_name'];
+        }
+        
+        if (isset($data['origin_type']) && in_array($data['origin_type'], self::ORIGIN_TYPES)) {
+            $fields[] = "origin_type = :origin_type";
+            $params['origin_type'] = $data['origin_type'];
+        }
+        
+        if (empty($fields)) {
+            return false;
+        }
+        
+        $sql = "UPDATE users SET " . implode(', ', $fields) . " WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute($params);
     }
 
     /**
@@ -85,19 +139,12 @@ class User
         $stmt = $this->db->prepare("DELETE FROM users WHERE id = :id");
         return $stmt->execute(['id' => $id]);
     }
-
+    
     /**
-     * Vérifier les credentials de connexion
+     * Récupérer la liste des types d'origine valides
      */
-    public function checkCredentials($email, $password)
+    public function getOriginTypes()
     {
-        $user = $this->findByEmail($email);
-        
-        if ($user && password_verify($password, $user['password'])) {
-            return $user;
-        }
-        
-        return false;
+        return self::ORIGIN_TYPES;
     }
 }
-
